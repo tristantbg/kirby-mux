@@ -16,6 +16,6 @@ fields:
     inline: true
   thumbnail:
     label: field.blocks.mux-video.thumbnail
-    help: fields.blocks.mux-video.thumbnail.help
+    help: field.blocks.mux-video.thumbnail.help
     type: number
     default: 0
