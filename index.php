@@ -18,6 +18,62 @@ Kirby::plugin('robinscholz/kirby-mux', [
         'files/mux-video' => __DIR__ . '/blueprints/files/mux-video.yml',
         'blocks/mux-video' => __DIR__ . '/blueprints/blocks/mux-video.yml'
     ],
+    'fileMethods' => [
+        'muxUrlLow' => function () {
+            $playbackId = json_decode($this->mux())->playback_ids[0]->id;
+            return "https://stream.mux.com/".$playbackId."/low.mp4";
+        },
+        'muxUrlHigh' => function () {
+            $playbackId = json_decode($this->mux())->playback_ids[0]->id;
+            return "https://stream.mux.com/".$playbackId."/high.mp4";
+        },
+        'muxUrlStream' => function () {
+            $playbackId = json_decode($this->mux())->playback_ids[0]->id;
+            return "https://stream.mux.com/".$playbackId.".m3u8";
+        },
+        'muxThumbnail' => function ($width = null, $height = null, Float $time = null) {
+            $playbackId = json_decode($this->mux())->playback_ids[0]->id;
+            $url = "https://image.mux.com/".$playbackId."/thumbnail.jpg";
+
+            $params = [];
+            if ($width) {
+              $params['width'] = $width;
+            }
+            if ($height) {
+              $params['height'] = $height;
+              $params['fit_mode'] = 'smartcrop';
+            }
+            if ($time) {
+              $params['time'] = $time;
+            }
+            if (count($params)) {
+              $url .= '?'.http_build_query($params);
+            }
+            return $url;
+        },
+        'muxThumbnailAnimated' => function ($width = null, $height = null, Float $start = null, Float $end = null) {
+            $playbackId = json_decode($this->mux())->playback_ids[0]->id;
+            $url = "https://image.mux.com/".$playbackId."/animated.gif";
+
+            $params = [];
+            if ($width) {
+              $params['width'] = $width;
+            }
+            if ($height) {
+              $params['height'] = $height;
+            }
+            if ($start) {
+              $params['start'] = $start;
+            }
+            if ($end) {
+              $params['end'] = $end;
+            }
+            if (count($params)) {
+              $url .= '?'.http_build_query($params);
+            }
+            return $url;
+        }
+    ],
     'hooks' => [
         'file.create:after' => function (Kirby\Cms\File $file) {
             if ($file->type() !== 'video') { return; }
