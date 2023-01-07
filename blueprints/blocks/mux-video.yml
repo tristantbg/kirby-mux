@@ -5,15 +5,11 @@ fields:
     label: field.blocks.video.name
     type: files
     multiple: false
-    query: page.files.template('mux-video')
+    query: page.files.template('video')
     image:
       back: black
     uploads:
-      template: mux-video
-  caption:
-    label: field.blocks.video.caption
-    type: writer
-    inline: true
+      template: video
   thumbnail:
     label: field.blocks.mux-video.thumbnail
     help: field.blocks.mux-video.thumbnail.help

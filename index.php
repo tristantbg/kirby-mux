@@ -1,12 +1,12 @@
 <?php
 
 @include_once __DIR__ . '/vendor/autoload.php';
-Dotenv\Dotenv::createImmutable(kirby()->root('base'))->load(); // TODO: Add configurable path for .env
+Dotenv\Dotenv::createImmutable(__DIR__)->load(); // TODO: Add configurable path for .env
 
 Kirby::plugin('robinscholz/kirby-mux', [
     'translations' => [
         'en' => [
-            'field.blocks.mux-video.thumbnail' => 'Generate thumbnail from frame',
+            'field.blocks.mux-video.thumbnail' => 'Thumbnail',
             'field.blocks.mux-video.thumbnail.help' => 'In seconds',
         ],
         'de' => [
@@ -20,12 +20,63 @@ Kirby::plugin('robinscholz/kirby-mux', [
     ],
     'fileMethods' => [
         'muxUrlLow' => function () {
+
+            $assetId = json_decode($this->mux())->id;
             $playbackId = json_decode($this->mux())->playback_ids[0]->id;
+
+            if (json_decode($this->mux())->static_renditions->status != 'ready') {
+              // Authenticate
+              $assetsApi = KirbyMux\Auth::assetsApi();
+
+              $assetData = $assetsApi->getAsset($assetId)->getData();
+
+              while(true){
+                  // ========== get-asset ==========
+                  $waitingAsset = $assetsApi->getAsset($assetId);
+                  if ($waitingAsset->getData()['static_renditions']['status'] != 'ready') {
+                      // print("    still waiting for asset to become ready...\n");
+                      sleep(1);
+                  }
+                  else {
+                      $this->update([
+                        'mux' => $waitingAsset->getData()
+                      ]);
+                      break;
+                  }
+              }
+            }
+
             return "https://stream.mux.com/".$playbackId."/low.mp4";
         },
         'muxUrlHigh' => function () {
+            $assetId = json_decode($this->mux())->id;
             $playbackId = json_decode($this->mux())->playback_ids[0]->id;
-            return "https://stream.mux.com/".$playbackId."/high.mp4";
+
+            if (json_decode($this->mux())->static_renditions->status != 'ready') {
+              // Authenticate
+              $assetsApi = KirbyMux\Auth::assetsApi();
+
+              $assetData = $assetsApi->getAsset($assetId)->getData();
+
+              while(true){
+                  // ========== get-asset ==========
+                  $waitingAsset = $assetsApi->getAsset($assetId);
+                  if ($waitingAsset->getData()['static_renditions']['status'] != 'ready') {
+                      // print("    still waiting for asset to become ready...\n");
+                      sleep(1);
+                  }
+                  else {
+                      $this->update([
+                        'mux' => $waitingAsset->getData()
+                      ]);
+                      break;
+                  }
+              }
+            }
+
+            $static_renditions = json_decode($this->mux())->static_renditions;
+
+            return ($static_renditions->status == 'ready' && count($static_renditions->files) > 1) ? "https://stream.mux.com/".$playbackId."/high.mp4" : "https://stream.mux.com/".$playbackId."/low.mp4";
         },
         'muxUrlStream' => function () {
             $playbackId = json_decode($this->mux())->playback_ids[0]->id;
@@ -86,9 +137,33 @@ Kirby::plugin('robinscholz/kirby-mux', [
 
             // Save mux data
             try {
+
                 $file = $file->update([
                   'mux' => $result->getData()
                 ]);
+
+                // Wait for the asset to become ready...
+                if ($result->getData()->getStatus() != 'ready') {
+                    // print("    waiting for asset to become ready...\n");
+                    while(true){
+                        // ========== get-asset ==========
+                        $waitingAsset = $assetsApi->getAsset($result->getData()->getId());
+                        if ($waitingAsset->getData()->getStatus() != 'ready') {
+                            // print("    still waiting for asset to become ready...\n");
+                            sleep(1);
+                        }
+                        else {
+                            $url = "https://image.mux.com/".$result->getData()->getPlaybackIds()[0]->getId()."/thumbnail.jpg";
+                            $imagedata = file_get_contents($url);
+                            F::write($file->parent()->root() . '/' . F::name($file->filename()) . '-thumbnail.jpg', $imagedata);
+                            $file = $file->update([
+                              'mux' => $waitingAsset->getData()
+                            ]);
+                            break;
+                        }
+                    }
+                }
+
             } catch(Exception $e) {
                 throw new Exception($e->getMessage());
             }
@@ -105,6 +180,8 @@ Kirby::plugin('robinscholz/kirby-mux', [
             // Delete Asset
             try {
                 $assetsApi->deleteAsset($muxId);
+                F::remove($file->parent()->root() . '/' . F::name($file->filename()) . '-thumbnail.jpg');
+                F::remove($file->parent()->root() . '/' . F::name($file->filename()) . '-thumbnail.jpg.txt');
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
             }
@@ -139,6 +216,29 @@ Kirby::plugin('robinscholz/kirby-mux', [
                 $newFile = $newFile->update([
                 'mux' => $result->getData()
                 ]);
+
+                // Wait for the asset to become ready...
+                if ($result->getData()->getStatus() != 'ready') {
+                    // print("    waiting for asset to become ready...\n");
+                    while(true){
+                        // ========== get-asset ==========
+                        $waitingAsset = $assetsApi->getAsset($result->getData()->getId());
+                        if ($waitingAsset->getData()->getStatus() != 'ready') {
+                            // print("    still waiting for asset to become ready...\n");
+                            sleep(1);
+                        }
+                        else {
+                            $url = "https://image.mux.com/".$result->getData()->getPlaybackIds()[0]->getId()."/thumbnail.jpg?time=0";
+                            $imagedata = file_get_contents($url);
+                            F::write($file->parent()->root() . '/' . F::name($file->filename()) . '-thumbnail.jpg', $imagedata);
+                            $newFile = $newFile->update([
+                              'mux' => $waitingAsset->getData()
+                            ]);
+                            break;
+                        }
+                    }
+                }
+
             } catch(Exception $e) {
             throw new Exception($e->getMessage());
             }
