@@ -19,6 +19,9 @@ Kirby::plugin('robinscholz/kirby-mux', [
         'blocks/mux-video' => __DIR__ . '/blueprints/blocks/mux-video.yml'
     ],
     'fileMethods' => [
+        'muxPlaybackId' => function () {
+            return json_decode($this->mux())->playback_ids[0]->id;
+        },
         'muxUrlLow' => function () {
 
             $assetId = json_decode($this->mux())->id;
