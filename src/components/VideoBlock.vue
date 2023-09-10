@@ -2,8 +2,8 @@
   <k-block-figure
     :is-empty="!video.url"
     :caption="content.caption"
-    empty-icon="image"
-    empty-text="No file selected yet …"
+    empty-icon="video"
+    empty-text="Select a video …"
     @open="open"
     @update="update"
   >
