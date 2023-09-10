@@ -85,6 +85,27 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
     ];
 
     /**
+      * Array of nullable properties. Used for (de)serialization
+      *
+      * @var boolean[]
+      */
+    protected static array $openAPINullables = [
+        'total_watch_time' => false,
+        'total_views' => false,
+        'negative_impact_score' => false,
+        'metric' => false,
+        'filter_value' => false,
+        'filter_column' => false
+    ];
+
+    /**
+      * If a nullable field gets set to null, insert it here
+      *
+      * @var boolean[]
+      */
+    protected array $openAPINullablesSetToNull = [];
+
+    /**
      * Array of property to type mappings. Used for (de)serialization
      *
      * @return array
@@ -102,6 +123,48 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
     public static function openAPIFormats()
     {
         return self::$openAPIFormats;
+    }
+
+    /**
+     * Array of nullable properties
+     *
+     * @return array
+     */
+    protected static function openAPINullables(): array
+    {
+        return self::$openAPINullables;
+    }
+
+    /**
+     * Array of nullable field names deliberately set to null
+     *
+     * @return boolean[]
+     */
+    private function getOpenAPINullablesSetToNull(): array
+    {
+        return $this->openAPINullablesSetToNull;
+    }
+
+    /**
+     * Checks if a property is nullable
+     *
+     * @param string $property
+     * @return bool
+     */
+    public static function isNullable(string $property): bool
+    {
+        return self::openAPINullables()[$property] ?? false;
+    }
+
+    /**
+     * Checks if a nullable property is set to null.
+     *
+     * @param string $property
+     * @return bool
+     */
+    public function isNullableSetToNull(string $property): bool
+    {
+        return in_array($property, $this->getOpenAPINullablesSetToNull(), true);
     }
 
     /**
@@ -188,9 +251,6 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
         return self::$openAPIModelName;
     }
 
-    
-
-    
 
     /**
      * Associative array for storing property values
@@ -210,12 +270,30 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
         // MUX: enum hack (self::) due to OAS emitting problems.
         //      please re-integrate with mainline when possible.
         //      src: https://github.com/OpenAPITools/openapi-generator/issues/9038
-        $this->container['total_watch_time'] = $data['total_watch_time'] ?? null;
-        $this->container['total_views'] = $data['total_views'] ?? null;
-        $this->container['negative_impact_score'] = $data['negative_impact_score'] ?? null;
-        $this->container['metric'] = $data['metric'] ?? null;
-        $this->container['filter_value'] = $data['filter_value'] ?? null;
-        $this->container['filter_column'] = $data['filter_column'] ?? null;
+        $this->setIfExists('total_watch_time', $data ?? [], null);
+        $this->setIfExists('total_views', $data ?? [], null);
+        $this->setIfExists('negative_impact_score', $data ?? [], null);
+        $this->setIfExists('metric', $data ?? [], null);
+        $this->setIfExists('filter_value', $data ?? [], null);
+        $this->setIfExists('filter_column', $data ?? [], null);
+    }
+
+    /**
+    * Sets $this->container[$variableName] to the given data or to the given default Value; if $variableName
+    * is nullable and its value is set to null in the $fields array, then mark it as "set to null" in the
+    * $this->openAPINullablesSetToNull array
+    *
+    * @param string $variableName
+    * @param array  $fields
+    * @param mixed  $defaultValue
+    */
+    private function setIfExists(string $variableName, array $fields, $defaultValue): void
+    {
+        if (self::isNullable($variableName) && array_key_exists($variableName, $fields) && is_null($fields[$variableName])) {
+            $this->openAPINullablesSetToNull[] = $variableName;
+        }
+
+        $this->container[$variableName] = $fields[$variableName] ?? $defaultValue;
     }
 
     /**
@@ -261,6 +339,11 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setTotalWatchTime($total_watch_time)
     {
+
+        if (is_null($total_watch_time)) {
+            throw new \InvalidArgumentException('non-nullable total_watch_time cannot be null');
+        }
+
         $this->container['total_watch_time'] = $total_watch_time;
 
         return $this;
@@ -285,6 +368,11 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setTotalViews($total_views)
     {
+
+        if (is_null($total_views)) {
+            throw new \InvalidArgumentException('non-nullable total_views cannot be null');
+        }
+
         $this->container['total_views'] = $total_views;
 
         return $this;
@@ -309,6 +397,11 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setNegativeImpactScore($negative_impact_score)
     {
+
+        if (is_null($negative_impact_score)) {
+            throw new \InvalidArgumentException('non-nullable negative_impact_score cannot be null');
+        }
+
         $this->container['negative_impact_score'] = $negative_impact_score;
 
         return $this;
@@ -333,6 +426,11 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setMetric($metric)
     {
+
+        if (is_null($metric)) {
+            throw new \InvalidArgumentException('non-nullable metric cannot be null');
+        }
+
         $this->container['metric'] = $metric;
 
         return $this;
@@ -357,6 +455,11 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setFilterValue($filter_value)
     {
+
+        if (is_null($filter_value)) {
+            throw new \InvalidArgumentException('non-nullable filter_value cannot be null');
+        }
+
         $this->container['filter_value'] = $filter_value;
 
         return $this;
@@ -381,6 +484,11 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setFilterColumn($filter_column)
     {
+
+        if (is_null($filter_column)) {
+            throw new \InvalidArgumentException('non-nullable filter_column cannot be null');
+        }
+
         $this->container['filter_column'] = $filter_column;
 
         return $this;
@@ -392,7 +500,7 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->container[$offset]);
     }
@@ -404,6 +512,7 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return mixed|null
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->container[$offset] ?? null;
@@ -417,7 +526,7 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -433,7 +542,7 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->container[$offset]);
     }
@@ -445,6 +554,7 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      * @return mixed Returns data which can be serialized by json_encode(), which is a value
      * of any type other than a resource.
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
        return ObjectSerializer::sanitizeForSerialization($this);
@@ -455,7 +565,7 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode(
             ObjectSerializer::sanitizeForSerialization($this),
@@ -468,7 +578,7 @@ class Insight implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function toHeaderValue()
+    public function toHeaderValue(): string
     {
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }

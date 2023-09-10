@@ -67,7 +67,8 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
         'deleted_at' => 'string',
         'asset_state' => 'string',
         'asset_duration' => 'double',
-        'delivered_seconds' => 'double'
+        'delivered_seconds' => 'double',
+        'delivered_seconds_by_resolution' => '\MuxPhp\Models\DeliveryReportDeliveredSecondsByResolution'
     ];
 
     /**
@@ -85,8 +86,33 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
         'deleted_at' => null,
         'asset_state' => null,
         'asset_duration' => 'double',
-        'delivered_seconds' => 'double'
+        'delivered_seconds' => 'double',
+        'delivered_seconds_by_resolution' => null
     ];
+
+    /**
+      * Array of nullable properties. Used for (de)serialization
+      *
+      * @var boolean[]
+      */
+    protected static array $openAPINullables = [
+        'live_stream_id' => false,
+        'asset_id' => false,
+        'passthrough' => false,
+        'created_at' => false,
+        'deleted_at' => false,
+        'asset_state' => false,
+        'asset_duration' => false,
+        'delivered_seconds' => false,
+        'delivered_seconds_by_resolution' => false
+    ];
+
+    /**
+      * If a nullable field gets set to null, insert it here
+      *
+      * @var boolean[]
+      */
+    protected array $openAPINullablesSetToNull = [];
 
     /**
      * Array of property to type mappings. Used for (de)serialization
@@ -109,6 +135,48 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
     }
 
     /**
+     * Array of nullable properties
+     *
+     * @return array
+     */
+    protected static function openAPINullables(): array
+    {
+        return self::$openAPINullables;
+    }
+
+    /**
+     * Array of nullable field names deliberately set to null
+     *
+     * @return boolean[]
+     */
+    private function getOpenAPINullablesSetToNull(): array
+    {
+        return $this->openAPINullablesSetToNull;
+    }
+
+    /**
+     * Checks if a property is nullable
+     *
+     * @param string $property
+     * @return bool
+     */
+    public static function isNullable(string $property): bool
+    {
+        return self::openAPINullables()[$property] ?? false;
+    }
+
+    /**
+     * Checks if a nullable property is set to null.
+     *
+     * @param string $property
+     * @return bool
+     */
+    public function isNullableSetToNull(string $property): bool
+    {
+        return in_array($property, $this->getOpenAPINullablesSetToNull(), true);
+    }
+
+    /**
      * Array of attributes where the key is the local name,
      * and the value is the original name
      *
@@ -122,7 +190,8 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
         'deleted_at' => 'deleted_at',
         'asset_state' => 'asset_state',
         'asset_duration' => 'asset_duration',
-        'delivered_seconds' => 'delivered_seconds'
+        'delivered_seconds' => 'delivered_seconds',
+        'delivered_seconds_by_resolution' => 'delivered_seconds_by_resolution'
     ];
 
     /**
@@ -138,7 +207,8 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
         'deleted_at' => 'setDeletedAt',
         'asset_state' => 'setAssetState',
         'asset_duration' => 'setAssetDuration',
-        'delivered_seconds' => 'setDeliveredSeconds'
+        'delivered_seconds' => 'setDeliveredSeconds',
+        'delivered_seconds_by_resolution' => 'setDeliveredSecondsByResolution'
     ];
 
     /**
@@ -154,7 +224,8 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
         'deleted_at' => 'getDeletedAt',
         'asset_state' => 'getAssetState',
         'asset_duration' => 'getAssetDuration',
-        'delivered_seconds' => 'getDeliveredSeconds'
+        'delivered_seconds' => 'getDeliveredSeconds',
+        'delivered_seconds_by_resolution' => 'getDeliveredSecondsByResolution'
     ];
 
     /**
@@ -201,9 +272,7 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
     public const ASSET_STATE_READY = 'ready';
     public const ASSET_STATE_ERRORED = 'errored';
     public const ASSET_STATE_DELETED = 'deleted';
-    
 
-    
     /**
      * Gets allowable values of the enum
      *
@@ -217,7 +286,6 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
             self::ASSET_STATE_DELETED,
         ];
     }
-    
 
     /**
      * Associative array for storing property values
@@ -237,14 +305,33 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
         // MUX: enum hack (self::) due to OAS emitting problems.
         //      please re-integrate with mainline when possible.
         //      src: https://github.com/OpenAPITools/openapi-generator/issues/9038
-        $this->container['live_stream_id'] = $data['live_stream_id'] ?? null;
-        $this->container['asset_id'] = $data['asset_id'] ?? null;
-        $this->container['passthrough'] = $data['passthrough'] ?? null;
-        $this->container['created_at'] = $data['created_at'] ?? null;
-        $this->container['deleted_at'] = $data['deleted_at'] ?? null;
-        $this->container['asset_state'] = $data['asset_state'] ?? null;
-        $this->container['asset_duration'] = $data['asset_duration'] ?? null;
-        $this->container['delivered_seconds'] = $data['delivered_seconds'] ?? null;
+        $this->setIfExists('live_stream_id', $data ?? [], null);
+        $this->setIfExists('asset_id', $data ?? [], null);
+        $this->setIfExists('passthrough', $data ?? [], null);
+        $this->setIfExists('created_at', $data ?? [], null);
+        $this->setIfExists('deleted_at', $data ?? [], null);
+        $this->setIfExists('asset_state', $data ?? [], null);
+        $this->setIfExists('asset_duration', $data ?? [], null);
+        $this->setIfExists('delivered_seconds', $data ?? [], null);
+        $this->setIfExists('delivered_seconds_by_resolution', $data ?? [], null);
+    }
+
+    /**
+    * Sets $this->container[$variableName] to the given data or to the given default Value; if $variableName
+    * is nullable and its value is set to null in the $fields array, then mark it as "set to null" in the
+    * $this->openAPINullablesSetToNull array
+    *
+    * @param string $variableName
+    * @param array  $fields
+    * @param mixed  $defaultValue
+    */
+    private function setIfExists(string $variableName, array $fields, $defaultValue): void
+    {
+        if (self::isNullable($variableName) && array_key_exists($variableName, $fields) && is_null($fields[$variableName])) {
+            $this->openAPINullablesSetToNull[] = $variableName;
+        }
+
+        $this->container[$variableName] = $fields[$variableName] ?? $defaultValue;
     }
 
     /**
@@ -299,6 +386,11 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setLiveStreamId($live_stream_id)
     {
+
+        if (is_null($live_stream_id)) {
+            throw new \InvalidArgumentException('non-nullable live_stream_id cannot be null');
+        }
+
         $this->container['live_stream_id'] = $live_stream_id;
 
         return $this;
@@ -323,6 +415,11 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setAssetId($asset_id)
     {
+
+        if (is_null($asset_id)) {
+            throw new \InvalidArgumentException('non-nullable asset_id cannot be null');
+        }
+
         $this->container['asset_id'] = $asset_id;
 
         return $this;
@@ -347,6 +444,11 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setPassthrough($passthrough)
     {
+
+        if (is_null($passthrough)) {
+            throw new \InvalidArgumentException('non-nullable passthrough cannot be null');
+        }
+
         $this->container['passthrough'] = $passthrough;
 
         return $this;
@@ -371,6 +473,11 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setCreatedAt($created_at)
     {
+
+        if (is_null($created_at)) {
+            throw new \InvalidArgumentException('non-nullable created_at cannot be null');
+        }
+
         $this->container['created_at'] = $created_at;
 
         return $this;
@@ -395,6 +502,11 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setDeletedAt($deleted_at)
     {
+
+        if (is_null($deleted_at)) {
+            throw new \InvalidArgumentException('non-nullable deleted_at cannot be null');
+        }
+
         $this->container['deleted_at'] = $deleted_at;
 
         return $this;
@@ -429,6 +541,11 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
                 )
             );
         }
+
+        if (is_null($asset_state)) {
+            throw new \InvalidArgumentException('non-nullable asset_state cannot be null');
+        }
+
         $this->container['asset_state'] = $asset_state;
 
         return $this;
@@ -453,6 +570,11 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setAssetDuration($asset_duration)
     {
+
+        if (is_null($asset_duration)) {
+            throw new \InvalidArgumentException('non-nullable asset_duration cannot be null');
+        }
+
         $this->container['asset_duration'] = $asset_duration;
 
         return $this;
@@ -477,7 +599,41 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function setDeliveredSeconds($delivered_seconds)
     {
+
+        if (is_null($delivered_seconds)) {
+            throw new \InvalidArgumentException('non-nullable delivered_seconds cannot be null');
+        }
+
         $this->container['delivered_seconds'] = $delivered_seconds;
+
+        return $this;
+    }
+
+    /**
+     * Gets delivered_seconds_by_resolution
+     *
+     * @return \MuxPhp\Models\DeliveryReportDeliveredSecondsByResolution|null
+     */
+    public function getDeliveredSecondsByResolution()
+    {
+        return $this->container['delivered_seconds_by_resolution'];
+    }
+
+    /**
+     * Sets delivered_seconds_by_resolution
+     *
+     * @param \MuxPhp\Models\DeliveryReportDeliveredSecondsByResolution|null $delivered_seconds_by_resolution delivered_seconds_by_resolution
+     *
+     * @return self
+     */
+    public function setDeliveredSecondsByResolution($delivered_seconds_by_resolution)
+    {
+
+        if (is_null($delivered_seconds_by_resolution)) {
+            throw new \InvalidArgumentException('non-nullable delivered_seconds_by_resolution cannot be null');
+        }
+
+        $this->container['delivered_seconds_by_resolution'] = $delivered_seconds_by_resolution;
 
         return $this;
     }
@@ -488,7 +644,7 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->container[$offset]);
     }
@@ -500,6 +656,7 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return mixed|null
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->container[$offset] ?? null;
@@ -513,7 +670,7 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -529,7 +686,7 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->container[$offset]);
     }
@@ -541,6 +698,7 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      * @return mixed Returns data which can be serialized by json_encode(), which is a value
      * of any type other than a resource.
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
        return ObjectSerializer::sanitizeForSerialization($this);
@@ -551,7 +709,7 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode(
             ObjectSerializer::sanitizeForSerialization($this),
@@ -564,7 +722,7 @@ class DeliveryReport implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function toHeaderValue()
+    public function toHeaderValue(): string
     {
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }

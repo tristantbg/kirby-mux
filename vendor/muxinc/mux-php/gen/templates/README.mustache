@@ -1,6 +1,14 @@
 ![Mux PHP Banner](https://banner.mux.dev/?image=php)
 
-![](https://github.com/muxinc/mux-php/workflows/Integration%20Test/badge.svg)
+<p align="center">
+  <a href="https://packagist.org/packages/muxinc/mux-php"><img src="https://img.shields.io/packagist/v/muxinc/mux-php" title="Packagist" /></a>
+  <a href="https://github.com/muxinc/mux-php/workflows/Integration%20Test"><img src="https://github.com/muxinc/mux-php/workflows/Integration%20Test/badge.svg" title="CI" /></a>
+</p>
+<p align="center">
+  <a href="https://packagist.org/packages/muxinc/mux-php">Packagist</a> |
+  <a href="https://docs.mux.com">Mux Docs</a> |
+  <a href="https://docs.mux.com/api-reference">Mux API Reference </a>
+</p>
 
 # Mux PHP
 
@@ -67,6 +75,10 @@ To use the Mux API, you'll need an access token and a secret. [Details on obtain
 
 Its up to you to manage your token and secret. In our examples, we read them from `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` in your environment.
 
+### Documentation note
+
+Please note that our SDK and the API documentation are generated from our OpenAPI specification. Many of the examples in our specification have JSON strings representing the sample values.  Because of this, many of the API documentation examples use the `json_encode()` function to convert that JSON string into a PHP associative array. In your own code, you can skip that step and use an associative array directly, or create a new object using the appropriate model as shown in the example below.
+
 ### Example Usage
 
 Below is a quick example of using mux-php to ingest a new Video in your Mux account.
@@ -85,13 +97,13 @@ Below is a quick example of using mux-php to ingest a new Video in your Mux acco
 
     // Create Asset Request
     $input = new MuxPhp\Models\InputSettings(["url" => "https://storage.googleapis.com/muxdemofiles/mux-video-intro.mp4"]);
-    $createAssetRequest = new MuxPhp\Models\CreateAssetRequest(["input" => $input, "playback_policy" => [MuxPhp\Models\PlaybackPolicy::PUBLIC_PLAYBACK_POLICY] ]);
+    $createAssetRequest = new MuxPhp\Models\CreateAssetRequest(["input" => $input, "playback_policy" => [MuxPhp\Models\PlaybackPolicy::_PUBLIC] ]);
 
     // Ingest
     $result = $assetsApi->createAsset($createAssetRequest);
 
     // Print URL
-    print "Playback URL: https://stream.mux.com/" . $result->getData()->getPlaybackIds()[0]->getId() . ".m3u8\n"
+    print "Playback URL: https://stream.mux.com/" . $result->getData()->getPlaybackIds()[0]->getId() . ".m3u8\n";
 ```
 
 Be sure to also checkout the [examples directory](examples/):

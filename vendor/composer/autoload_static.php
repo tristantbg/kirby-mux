@@ -4,11 +4,10 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit61095a78fd1085026873c7561a209647
+class ComposerStaticInit8b1623af0ffaaf008be85a60e6dc5c57
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -66,8 +65,8 @@ class ComposerStaticInit61095a78fd1085026873c7561a209647
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -235,6 +234,7 @@ class ComposerStaticInit61095a78fd1085026873c7561a209647
         'GuzzleHttp\\Psr7\\StreamWrapper' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/StreamWrapper.php',
         'GuzzleHttp\\Psr7\\UploadedFile' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/UploadedFile.php',
         'GuzzleHttp\\Psr7\\Uri' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Uri.php',
+        'GuzzleHttp\\Psr7\\UriComparator' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/UriComparator.php',
         'GuzzleHttp\\Psr7\\UriNormalizer' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/UriNormalizer.php',
         'GuzzleHttp\\Psr7\\UriResolver' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/UriResolver.php',
         'GuzzleHttp\\Psr7\\Utils' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Utils.php',
@@ -260,9 +260,13 @@ class ComposerStaticInit61095a78fd1085026873c7561a209647
         'MuxPhp\\Api\\IncidentsApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/IncidentsApi.php',
         'MuxPhp\\Api\\LiveStreamsApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/LiveStreamsApi.php',
         'MuxPhp\\Api\\MetricsApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/MetricsApi.php',
+        'MuxPhp\\Api\\MonitoringApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/MonitoringApi.php',
         'MuxPhp\\Api\\PlaybackIDApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/PlaybackIDApi.php',
         'MuxPhp\\Api\\PlaybackRestrictionsApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/PlaybackRestrictionsApi.php',
         'MuxPhp\\Api\\RealTimeApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/RealTimeApi.php',
+        'MuxPhp\\Api\\SigningKeysApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/SigningKeysApi.php',
+        'MuxPhp\\Api\\SpacesApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/SpacesApi.php',
+        'MuxPhp\\Api\\TranscriptionVocabulariesApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/TranscriptionVocabulariesApi.php',
         'MuxPhp\\Api\\URLSigningKeysApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/URLSigningKeysApi.php',
         'MuxPhp\\Api\\VideoViewsApi' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Api/VideoViewsApi.php',
         'MuxPhp\\Configuration' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Configuration.php',
@@ -277,16 +281,25 @@ class ComposerStaticInit61095a78fd1085026873c7561a209647
         'MuxPhp\\Models\\AssetStaticRenditions' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/AssetStaticRenditions.php',
         'MuxPhp\\Models\\AssetStaticRenditionsFiles' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/AssetStaticRenditionsFiles.php',
         'MuxPhp\\Models\\BreakdownValue' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/BreakdownValue.php',
+        'MuxPhp\\Models\\Broadcast' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/Broadcast.php',
+        'MuxPhp\\Models\\BroadcastLayout' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/BroadcastLayout.php',
+        'MuxPhp\\Models\\BroadcastResolution' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/BroadcastResolution.php',
+        'MuxPhp\\Models\\BroadcastResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/BroadcastResponse.php',
+        'MuxPhp\\Models\\BroadcastStatus' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/BroadcastStatus.php',
         'MuxPhp\\Models\\CreateAssetRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreateAssetRequest.php',
+        'MuxPhp\\Models\\CreateBroadcastRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreateBroadcastRequest.php',
         'MuxPhp\\Models\\CreateLiveStreamRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreateLiveStreamRequest.php',
         'MuxPhp\\Models\\CreatePlaybackIDRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreatePlaybackIDRequest.php',
         'MuxPhp\\Models\\CreatePlaybackIDResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreatePlaybackIDResponse.php',
         'MuxPhp\\Models\\CreatePlaybackRestrictionRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreatePlaybackRestrictionRequest.php',
         'MuxPhp\\Models\\CreateSimulcastTargetRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreateSimulcastTargetRequest.php',
+        'MuxPhp\\Models\\CreateSpaceRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreateSpaceRequest.php',
         'MuxPhp\\Models\\CreateTrackRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreateTrackRequest.php',
         'MuxPhp\\Models\\CreateTrackResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreateTrackResponse.php',
+        'MuxPhp\\Models\\CreateTranscriptionVocabularyRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreateTranscriptionVocabularyRequest.php',
         'MuxPhp\\Models\\CreateUploadRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/CreateUploadRequest.php',
         'MuxPhp\\Models\\DeliveryReport' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/DeliveryReport.php',
+        'MuxPhp\\Models\\DeliveryReportDeliveredSecondsByResolution' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/DeliveryReportDeliveredSecondsByResolution.php',
         'MuxPhp\\Models\\DimensionValue' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/DimensionValue.php',
         'MuxPhp\\Models\\DisableLiveStreamResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/DisableLiveStreamResponse.php',
         'MuxPhp\\Models\\EnableLiveStreamResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/EnableLiveStreamResponse.php',
@@ -301,6 +314,10 @@ class ComposerStaticInit61095a78fd1085026873c7561a209647
         'MuxPhp\\Models\\GetAssetPlaybackIDResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetAssetPlaybackIDResponse.php',
         'MuxPhp\\Models\\GetLiveStreamPlaybackIDResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetLiveStreamPlaybackIDResponse.php',
         'MuxPhp\\Models\\GetMetricTimeseriesDataResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetMetricTimeseriesDataResponse.php',
+        'MuxPhp\\Models\\GetMonitoringBreakdownResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetMonitoringBreakdownResponse.php',
+        'MuxPhp\\Models\\GetMonitoringHistogramTimeseriesResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetMonitoringHistogramTimeseriesResponse.php',
+        'MuxPhp\\Models\\GetMonitoringHistogramTimeseriesResponseMeta' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetMonitoringHistogramTimeseriesResponseMeta.php',
+        'MuxPhp\\Models\\GetMonitoringTimeseriesResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetMonitoringTimeseriesResponse.php',
         'MuxPhp\\Models\\GetOverallValuesResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetOverallValuesResponse.php',
         'MuxPhp\\Models\\GetRealTimeBreakdownResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetRealTimeBreakdownResponse.php',
         'MuxPhp\\Models\\GetRealTimeHistogramTimeseriesResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/GetRealTimeHistogramTimeseriesResponse.php',
@@ -331,21 +348,31 @@ class ComposerStaticInit61095a78fd1085026873c7561a209647
         'MuxPhp\\Models\\ListIncidentsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListIncidentsResponse.php',
         'MuxPhp\\Models\\ListInsightsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListInsightsResponse.php',
         'MuxPhp\\Models\\ListLiveStreamsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListLiveStreamsResponse.php',
+        'MuxPhp\\Models\\ListMonitoringDimensionsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListMonitoringDimensionsResponse.php',
+        'MuxPhp\\Models\\ListMonitoringDimensionsResponseData' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListMonitoringDimensionsResponseData.php',
+        'MuxPhp\\Models\\ListMonitoringMetricsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListMonitoringMetricsResponse.php',
         'MuxPhp\\Models\\ListPlaybackRestrictionsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListPlaybackRestrictionsResponse.php',
         'MuxPhp\\Models\\ListRealTimeDimensionsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListRealTimeDimensionsResponse.php',
-        'MuxPhp\\Models\\ListRealTimeDimensionsResponseData' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListRealTimeDimensionsResponseData.php',
         'MuxPhp\\Models\\ListRealTimeMetricsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListRealTimeMetricsResponse.php',
         'MuxPhp\\Models\\ListRelatedIncidentsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListRelatedIncidentsResponse.php',
         'MuxPhp\\Models\\ListSigningKeysResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListSigningKeysResponse.php',
+        'MuxPhp\\Models\\ListSpacesResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListSpacesResponse.php',
+        'MuxPhp\\Models\\ListTranscriptionVocabulariesResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListTranscriptionVocabulariesResponse.php',
         'MuxPhp\\Models\\ListUploadsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListUploadsResponse.php',
         'MuxPhp\\Models\\ListVideoViewExportsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListVideoViewExportsResponse.php',
         'MuxPhp\\Models\\ListVideoViewsResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ListVideoViewsResponse.php',
         'MuxPhp\\Models\\LiveStream' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/LiveStream.php',
         'MuxPhp\\Models\\LiveStreamEmbeddedSubtitleSettings' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/LiveStreamEmbeddedSubtitleSettings.php',
+        'MuxPhp\\Models\\LiveStreamGeneratedSubtitleSettings' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/LiveStreamGeneratedSubtitleSettings.php',
         'MuxPhp\\Models\\LiveStreamResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/LiveStreamResponse.php',
         'MuxPhp\\Models\\LiveStreamStatus' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/LiveStreamStatus.php',
         'MuxPhp\\Models\\Metric' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/Metric.php',
         'MuxPhp\\Models\\ModelInterface' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/ModelInterface.php',
+        'MuxPhp\\Models\\MonitoringBreakdownValue' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/MonitoringBreakdownValue.php',
+        'MuxPhp\\Models\\MonitoringHistogramTimeseriesBucket' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/MonitoringHistogramTimeseriesBucket.php',
+        'MuxPhp\\Models\\MonitoringHistogramTimeseriesBucketValues' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/MonitoringHistogramTimeseriesBucketValues.php',
+        'MuxPhp\\Models\\MonitoringHistogramTimeseriesDatapoint' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/MonitoringHistogramTimeseriesDatapoint.php',
+        'MuxPhp\\Models\\MonitoringTimeseriesDatapoint' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/MonitoringTimeseriesDatapoint.php',
         'MuxPhp\\Models\\NotificationRule' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/NotificationRule.php',
         'MuxPhp\\Models\\OverallValues' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/OverallValues.php',
         'MuxPhp\\Models\\PlaybackID' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/PlaybackID.php',
@@ -364,13 +391,23 @@ class ComposerStaticInit61095a78fd1085026873c7561a209647
         'MuxPhp\\Models\\SigningKeyResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/SigningKeyResponse.php',
         'MuxPhp\\Models\\SimulcastTarget' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/SimulcastTarget.php',
         'MuxPhp\\Models\\SimulcastTargetResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/SimulcastTargetResponse.php',
+        'MuxPhp\\Models\\Space' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/Space.php',
+        'MuxPhp\\Models\\SpaceResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/SpaceResponse.php',
+        'MuxPhp\\Models\\SpaceStatus' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/SpaceStatus.php',
+        'MuxPhp\\Models\\SpaceType' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/SpaceType.php',
+        'MuxPhp\\Models\\StartSpaceBroadcastResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/StartSpaceBroadcastResponse.php',
+        'MuxPhp\\Models\\StopSpaceBroadcastResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/StopSpaceBroadcastResponse.php',
         'MuxPhp\\Models\\Track' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/Track.php',
+        'MuxPhp\\Models\\TranscriptionVocabulary' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/TranscriptionVocabulary.php',
+        'MuxPhp\\Models\\TranscriptionVocabularyResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/TranscriptionVocabularyResponse.php',
         'MuxPhp\\Models\\UpdateAssetMP4SupportRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UpdateAssetMP4SupportRequest.php',
         'MuxPhp\\Models\\UpdateAssetMasterAccessRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UpdateAssetMasterAccessRequest.php',
         'MuxPhp\\Models\\UpdateAssetRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UpdateAssetRequest.php',
         'MuxPhp\\Models\\UpdateLiveStreamEmbeddedSubtitlesRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UpdateLiveStreamEmbeddedSubtitlesRequest.php',
+        'MuxPhp\\Models\\UpdateLiveStreamGeneratedSubtitlesRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UpdateLiveStreamGeneratedSubtitlesRequest.php',
         'MuxPhp\\Models\\UpdateLiveStreamRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UpdateLiveStreamRequest.php',
         'MuxPhp\\Models\\UpdateReferrerDomainRestrictionRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UpdateReferrerDomainRestrictionRequest.php',
+        'MuxPhp\\Models\\UpdateTranscriptionVocabularyRequest' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UpdateTranscriptionVocabularyRequest.php',
         'MuxPhp\\Models\\Upload' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/Upload.php',
         'MuxPhp\\Models\\UploadError' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UploadError.php',
         'MuxPhp\\Models\\UploadResponse' => __DIR__ . '/..' . '/muxinc/mux-php/MuxPhp/Models/UploadResponse.php',
@@ -412,9 +449,9 @@ class ComposerStaticInit61095a78fd1085026873c7561a209647
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit61095a78fd1085026873c7561a209647::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit61095a78fd1085026873c7561a209647::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit61095a78fd1085026873c7561a209647::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit8b1623af0ffaaf008be85a60e6dc5c57::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit8b1623af0ffaaf008be85a60e6dc5c57::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit8b1623af0ffaaf008be85a60e6dc5c57::$classMap;
 
         }, null, ClassLoader::class);
     }

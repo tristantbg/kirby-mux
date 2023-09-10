@@ -70,7 +70,8 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
         'pixel_aspect_ratio' => 'string',
         'video_edit_list' => 'string',
         'audio_edit_list' => 'string',
-        'unexpected_media_file_parameters' => 'string'
+        'unexpected_media_file_parameters' => 'string',
+        'unsupported_pixel_format' => 'string'
     ];
 
     /**
@@ -90,8 +91,35 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
         'pixel_aspect_ratio' => null,
         'video_edit_list' => null,
         'audio_edit_list' => null,
-        'unexpected_media_file_parameters' => null
+        'unexpected_media_file_parameters' => null,
+        'unsupported_pixel_format' => null
     ];
+
+    /**
+      * Array of nullable properties. Used for (de)serialization
+      *
+      * @var boolean[]
+      */
+    protected static array $openAPINullables = [
+        'video_codec' => false,
+        'audio_codec' => false,
+        'video_gop_size' => false,
+        'video_frame_rate' => false,
+        'video_resolution' => false,
+        'video_bitrate' => false,
+        'pixel_aspect_ratio' => false,
+        'video_edit_list' => false,
+        'audio_edit_list' => false,
+        'unexpected_media_file_parameters' => false,
+        'unsupported_pixel_format' => false
+    ];
+
+    /**
+      * If a nullable field gets set to null, insert it here
+      *
+      * @var boolean[]
+      */
+    protected array $openAPINullablesSetToNull = [];
 
     /**
      * Array of property to type mappings. Used for (de)serialization
@@ -114,6 +142,48 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
     }
 
     /**
+     * Array of nullable properties
+     *
+     * @return array
+     */
+    protected static function openAPINullables(): array
+    {
+        return self::$openAPINullables;
+    }
+
+    /**
+     * Array of nullable field names deliberately set to null
+     *
+     * @return boolean[]
+     */
+    private function getOpenAPINullablesSetToNull(): array
+    {
+        return $this->openAPINullablesSetToNull;
+    }
+
+    /**
+     * Checks if a property is nullable
+     *
+     * @param string $property
+     * @return bool
+     */
+    public static function isNullable(string $property): bool
+    {
+        return self::openAPINullables()[$property] ?? false;
+    }
+
+    /**
+     * Checks if a nullable property is set to null.
+     *
+     * @param string $property
+     * @return bool
+     */
+    public function isNullableSetToNull(string $property): bool
+    {
+        return in_array($property, $this->getOpenAPINullablesSetToNull(), true);
+    }
+
+    /**
      * Array of attributes where the key is the local name,
      * and the value is the original name
      *
@@ -129,7 +199,8 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
         'pixel_aspect_ratio' => 'pixel_aspect_ratio',
         'video_edit_list' => 'video_edit_list',
         'audio_edit_list' => 'audio_edit_list',
-        'unexpected_media_file_parameters' => 'unexpected_media_file_parameters'
+        'unexpected_media_file_parameters' => 'unexpected_media_file_parameters',
+        'unsupported_pixel_format' => 'unsupported_pixel_format'
     ];
 
     /**
@@ -147,7 +218,8 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
         'pixel_aspect_ratio' => 'setPixelAspectRatio',
         'video_edit_list' => 'setVideoEditList',
         'audio_edit_list' => 'setAudioEditList',
-        'unexpected_media_file_parameters' => 'setUnexpectedMediaFileParameters'
+        'unexpected_media_file_parameters' => 'setUnexpectedMediaFileParameters',
+        'unsupported_pixel_format' => 'setUnsupportedPixelFormat'
     ];
 
     /**
@@ -165,7 +237,8 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
         'pixel_aspect_ratio' => 'getPixelAspectRatio',
         'video_edit_list' => 'getVideoEditList',
         'audio_edit_list' => 'getAudioEditList',
-        'unexpected_media_file_parameters' => 'getUnexpectedMediaFileParameters'
+        'unexpected_media_file_parameters' => 'getUnexpectedMediaFileParameters',
+        'unsupported_pixel_format' => 'getUnsupportedPixelFormat'
     ];
 
     /**
@@ -214,9 +287,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
     public const VIDEO_EDIT_LIST_NON_STANDARD = 'non-standard';
     public const AUDIO_EDIT_LIST_NON_STANDARD = 'non-standard';
     public const UNEXPECTED_MEDIA_FILE_PARAMETERS_NON_STANDARD = 'non-standard';
-    
 
-    
     /**
      * Gets allowable values of the enum
      *
@@ -228,7 +299,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
             self::VIDEO_GOP_SIZE_HIGH,
         ];
     }
-    
+
     /**
      * Gets allowable values of the enum
      *
@@ -240,7 +311,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
             self::VIDEO_BITRATE_HIGH,
         ];
     }
-    
+
     /**
      * Gets allowable values of the enum
      *
@@ -252,7 +323,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
             self::VIDEO_EDIT_LIST_NON_STANDARD,
         ];
     }
-    
+
     /**
      * Gets allowable values of the enum
      *
@@ -264,7 +335,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
             self::AUDIO_EDIT_LIST_NON_STANDARD,
         ];
     }
-    
+
     /**
      * Gets allowable values of the enum
      *
@@ -276,7 +347,6 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
             self::UNEXPECTED_MEDIA_FILE_PARAMETERS_NON_STANDARD,
         ];
     }
-    
 
     /**
      * Associative array for storing property values
@@ -296,16 +366,35 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
         // MUX: enum hack (self::) due to OAS emitting problems.
         //      please re-integrate with mainline when possible.
         //      src: https://github.com/OpenAPITools/openapi-generator/issues/9038
-        $this->container['video_codec'] = $data['video_codec'] ?? null;
-        $this->container['audio_codec'] = $data['audio_codec'] ?? null;
-        $this->container['video_gop_size'] = $data['video_gop_size'] ?? null;
-        $this->container['video_frame_rate'] = $data['video_frame_rate'] ?? null;
-        $this->container['video_resolution'] = $data['video_resolution'] ?? null;
-        $this->container['video_bitrate'] = $data['video_bitrate'] ?? null;
-        $this->container['pixel_aspect_ratio'] = $data['pixel_aspect_ratio'] ?? null;
-        $this->container['video_edit_list'] = $data['video_edit_list'] ?? null;
-        $this->container['audio_edit_list'] = $data['audio_edit_list'] ?? null;
-        $this->container['unexpected_media_file_parameters'] = $data['unexpected_media_file_parameters'] ?? null;
+        $this->setIfExists('video_codec', $data ?? [], null);
+        $this->setIfExists('audio_codec', $data ?? [], null);
+        $this->setIfExists('video_gop_size', $data ?? [], null);
+        $this->setIfExists('video_frame_rate', $data ?? [], null);
+        $this->setIfExists('video_resolution', $data ?? [], null);
+        $this->setIfExists('video_bitrate', $data ?? [], null);
+        $this->setIfExists('pixel_aspect_ratio', $data ?? [], null);
+        $this->setIfExists('video_edit_list', $data ?? [], null);
+        $this->setIfExists('audio_edit_list', $data ?? [], null);
+        $this->setIfExists('unexpected_media_file_parameters', $data ?? [], null);
+        $this->setIfExists('unsupported_pixel_format', $data ?? [], null);
+    }
+
+    /**
+    * Sets $this->container[$variableName] to the given data or to the given default Value; if $variableName
+    * is nullable and its value is set to null in the $fields array, then mark it as "set to null" in the
+    * $this->openAPINullablesSetToNull array
+    *
+    * @param string $variableName
+    * @param array  $fields
+    * @param mixed  $defaultValue
+    */
+    private function setIfExists(string $variableName, array $fields, $defaultValue): void
+    {
+        if (self::isNullable($variableName) && array_key_exists($variableName, $fields) && is_null($fields[$variableName])) {
+            $this->openAPINullablesSetToNull[] = $variableName;
+        }
+
+        $this->container[$variableName] = $fields[$variableName] ?? $defaultValue;
     }
 
     /**
@@ -396,6 +485,11 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      */
     public function setVideoCodec($video_codec)
     {
+
+        if (is_null($video_codec)) {
+            throw new \InvalidArgumentException('non-nullable video_codec cannot be null');
+        }
+
         $this->container['video_codec'] = $video_codec;
 
         return $this;
@@ -420,6 +514,11 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      */
     public function setAudioCodec($audio_codec)
     {
+
+        if (is_null($audio_codec)) {
+            throw new \InvalidArgumentException('non-nullable audio_codec cannot be null');
+        }
+
         $this->container['audio_codec'] = $audio_codec;
 
         return $this;
@@ -438,7 +537,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets video_gop_size
      *
-     * @param string|null $video_gop_size The video key frame Interval (also called as Group of Picture or GOP) of the input file is `high`. This parameter is present when the gop is greater than 10 seconds.
+     * @param string|null $video_gop_size The video key frame Interval (also called as Group of Picture or GOP) of the input file is `high`. This parameter is present when the gop is greater than 20 seconds.
      *
      * @return self
      */
@@ -454,6 +553,11 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
                 )
             );
         }
+
+        if (is_null($video_gop_size)) {
+            throw new \InvalidArgumentException('non-nullable video_gop_size cannot be null');
+        }
+
         $this->container['video_gop_size'] = $video_gop_size;
 
         return $this;
@@ -472,12 +576,17 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
     /**
      * Sets video_frame_rate
      *
-     * @param string|null $video_frame_rate The video frame rate of the input file. Video with average frames per second (fps) less than 10 or greater than 120 is non-standard. A `-1` frame rate value indicates Mux could not determine the frame rate of the video track.
+     * @param string|null $video_frame_rate The video frame rate of the input file. Video with average frames per second (fps) less than 5 or greater than 120 is non-standard. A `-1` frame rate value indicates Mux could not determine the frame rate of the video track.
      *
      * @return self
      */
     public function setVideoFrameRate($video_frame_rate)
     {
+
+        if (is_null($video_frame_rate)) {
+            throw new \InvalidArgumentException('non-nullable video_frame_rate cannot be null');
+        }
+
         $this->container['video_frame_rate'] = $video_frame_rate;
 
         return $this;
@@ -502,6 +611,11 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      */
     public function setVideoResolution($video_resolution)
     {
+
+        if (is_null($video_resolution)) {
+            throw new \InvalidArgumentException('non-nullable video_resolution cannot be null');
+        }
+
         $this->container['video_resolution'] = $video_resolution;
 
         return $this;
@@ -536,6 +650,11 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
                 )
             );
         }
+
+        if (is_null($video_bitrate)) {
+            throw new \InvalidArgumentException('non-nullable video_bitrate cannot be null');
+        }
+
         $this->container['video_bitrate'] = $video_bitrate;
 
         return $this;
@@ -560,6 +679,11 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      */
     public function setPixelAspectRatio($pixel_aspect_ratio)
     {
+
+        if (is_null($pixel_aspect_ratio)) {
+            throw new \InvalidArgumentException('non-nullable pixel_aspect_ratio cannot be null');
+        }
+
         $this->container['pixel_aspect_ratio'] = $pixel_aspect_ratio;
 
         return $this;
@@ -594,6 +718,11 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
                 )
             );
         }
+
+        if (is_null($video_edit_list)) {
+            throw new \InvalidArgumentException('non-nullable video_edit_list cannot be null');
+        }
+
         $this->container['video_edit_list'] = $video_edit_list;
 
         return $this;
@@ -628,6 +757,11 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
                 )
             );
         }
+
+        if (is_null($audio_edit_list)) {
+            throw new \InvalidArgumentException('non-nullable audio_edit_list cannot be null');
+        }
+
         $this->container['audio_edit_list'] = $audio_edit_list;
 
         return $this;
@@ -662,7 +796,41 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
                 )
             );
         }
+
+        if (is_null($unexpected_media_file_parameters)) {
+            throw new \InvalidArgumentException('non-nullable unexpected_media_file_parameters cannot be null');
+        }
+
         $this->container['unexpected_media_file_parameters'] = $unexpected_media_file_parameters;
+
+        return $this;
+    }
+
+    /**
+     * Gets unsupported_pixel_format
+     *
+     * @return string|null
+     */
+    public function getUnsupportedPixelFormat()
+    {
+        return $this->container['unsupported_pixel_format'];
+    }
+
+    /**
+     * Sets unsupported_pixel_format
+     *
+     * @param string|null $unsupported_pixel_format The video pixel format, as a string, returned by libav. Considered non-standard if not one of yuv420p or yuvj420p.
+     *
+     * @return self
+     */
+    public function setUnsupportedPixelFormat($unsupported_pixel_format)
+    {
+
+        if (is_null($unsupported_pixel_format)) {
+            throw new \InvalidArgumentException('non-nullable unsupported_pixel_format cannot be null');
+        }
+
+        $this->container['unsupported_pixel_format'] = $unsupported_pixel_format;
 
         return $this;
     }
@@ -673,7 +841,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      *
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->container[$offset]);
     }
@@ -685,6 +853,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      *
      * @return mixed|null
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->container[$offset] ?? null;
@@ -698,7 +867,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -714,7 +883,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->container[$offset]);
     }
@@ -726,6 +895,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      * @return mixed Returns data which can be serialized by json_encode(), which is a value
      * of any type other than a resource.
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
        return ObjectSerializer::sanitizeForSerialization($this);
@@ -736,7 +906,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode(
             ObjectSerializer::sanitizeForSerialization($this),
@@ -749,7 +919,7 @@ class AssetNonStandardInputReasons implements ModelInterface, ArrayAccess, \Json
      *
      * @return string
      */
-    public function toHeaderValue()
+    public function toHeaderValue(): string
     {
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
