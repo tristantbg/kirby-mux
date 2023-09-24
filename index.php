@@ -126,6 +126,9 @@ Kirby::plugin('robinscholz/kirby-mux', [
               $url .= '?'.http_build_query($params);
             }
             return $url;
+        },
+        'muxKirbyThumbnail' => function () {
+            return $this->parent()->file(F::name($this->filename()) . '-thumbnail.jpg');
         }
     ],
     'hooks' => [
