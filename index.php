@@ -29,8 +29,9 @@ Kirby::plugin('robinscholz/kirby-mux', [
 
             $assetId = json_decode($this->mux())->id;
             $playbackId = json_decode($this->mux())->playback_ids[0]->id;
+            $preparingRenditions = (json_decode($this->mux())->status == 'preparing' || json_decode($this->mux())->static_renditions->status != 'ready');
 
-            if (json_decode($this->mux())->static_renditions->status != 'ready') {
+            if ($preparingRenditions) {
                 // Authenticate
                 $assetsApi = KirbyMux\Auth::assetsApi();
 
@@ -56,8 +57,9 @@ Kirby::plugin('robinscholz/kirby-mux', [
         'muxUrlHigh' => function () {
             $assetId = json_decode($this->mux())->id;
             $playbackId = json_decode($this->mux())->playback_ids[0]->id;
+            $preparingRenditions = (json_decode($this->mux())->status == 'preparing' || json_decode($this->mux())->static_renditions->status != 'ready');
 
-            if (json_decode($this->mux())->static_renditions->status != 'ready') {
+            if ($preparingRenditions) {
                 // Authenticate
                 $assetsApi = KirbyMux\Auth::assetsApi();
 
@@ -78,9 +80,9 @@ Kirby::plugin('robinscholz/kirby-mux', [
                 }
             }
 
-            $static_renditions = json_decode($this->mux())->static_renditions;
+            $static_renditions = json_decode($this->mux(), true)["static_renditions"];
 
-            return ($static_renditions->status == 'ready' && count($static_renditions->files) > 1) ? "https://stream.mux.com/" . $playbackId . "/high.mp4" : "https://stream.mux.com/" . $playbackId . "/low.mp4";
+            return ($static_renditions["status"] == 'ready' && count($static_renditions["files"]) > 1) ? "https://stream.mux.com/" . $playbackId . "/high.mp4" : "https://stream.mux.com/" . $playbackId . "/low.mp4";
         },
         'muxUrlStream' => function () {
             $playbackId = json_decode($this->mux())->playback_ids[0]->id;
@@ -132,7 +134,16 @@ Kirby::plugin('robinscholz/kirby-mux', [
             return $url;
         },
         'muxKirbyThumbnail' => function () {
-            return $this->parent()->file(F::name($this->filename()) . '-thumbnail.jpg');
+            $muxThumbnail = $this->parent()->file(F::name($this->filename()) . '-thumbnail.jpg');
+
+            if (!$muxThumbnail) {
+                $url = "https://image.mux.com/" . json_decode($this->mux())->playback_ids[0]->id . "/thumbnail.jpg";
+                $imagedata = file_get_contents($url);
+                F::write($this->parent()->root() . '/' . $this->name() . '-thumbnail.jpg', $imagedata);
+                $muxThumbnail = $this->parent()->file(F::name($this->filename()) . '-thumbnail.jpg');
+            }
+
+            return $muxThumbnail;
         },
     ],
     'hooks' => [
