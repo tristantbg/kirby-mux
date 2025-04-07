@@ -62,6 +62,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $openAPITypes = [
         'input' => '\MuxPhp\Models\InputSettings[]',
         'playback_policy' => '\MuxPhp\Models\PlaybackPolicy[]',
+        'advanced_playback_policies' => '\MuxPhp\Models\CreatePlaybackIDRequest[]',
         'per_title_encode' => 'bool',
         'passthrough' => 'string',
         'mp4_support' => 'string',
@@ -69,7 +70,8 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         'master_access' => 'string',
         'test' => 'bool',
         'max_resolution_tier' => 'string',
-        'encoding_tier' => 'string'
+        'encoding_tier' => 'string',
+        'video_quality' => 'string'
     ];
 
     /**
@@ -82,6 +84,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $openAPIFormats = [
         'input' => null,
         'playback_policy' => null,
+        'advanced_playback_policies' => null,
         'per_title_encode' => 'boolean',
         'passthrough' => null,
         'mp4_support' => null,
@@ -89,7 +92,8 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         'master_access' => null,
         'test' => 'boolean',
         'max_resolution_tier' => null,
-        'encoding_tier' => null
+        'encoding_tier' => null,
+        'video_quality' => null
     ];
 
     /**
@@ -100,6 +104,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static array $openAPINullables = [
         'input' => false,
         'playback_policy' => false,
+        'advanced_playback_policies' => false,
         'per_title_encode' => false,
         'passthrough' => false,
         'mp4_support' => false,
@@ -107,7 +112,8 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         'master_access' => false,
         'test' => false,
         'max_resolution_tier' => false,
-        'encoding_tier' => false
+        'encoding_tier' => false,
+        'video_quality' => false
     ];
 
     /**
@@ -188,6 +194,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $attributeMap = [
         'input' => 'input',
         'playback_policy' => 'playback_policy',
+        'advanced_playback_policies' => 'advanced_playback_policies',
         'per_title_encode' => 'per_title_encode',
         'passthrough' => 'passthrough',
         'mp4_support' => 'mp4_support',
@@ -195,7 +202,8 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         'master_access' => 'master_access',
         'test' => 'test',
         'max_resolution_tier' => 'max_resolution_tier',
-        'encoding_tier' => 'encoding_tier'
+        'encoding_tier' => 'encoding_tier',
+        'video_quality' => 'video_quality'
     ];
 
     /**
@@ -206,6 +214,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $setters = [
         'input' => 'setInput',
         'playback_policy' => 'setPlaybackPolicy',
+        'advanced_playback_policies' => 'setAdvancedPlaybackPolicies',
         'per_title_encode' => 'setPerTitleEncode',
         'passthrough' => 'setPassthrough',
         'mp4_support' => 'setMp4Support',
@@ -213,7 +222,8 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         'master_access' => 'setMasterAccess',
         'test' => 'setTest',
         'max_resolution_tier' => 'setMaxResolutionTier',
-        'encoding_tier' => 'setEncodingTier'
+        'encoding_tier' => 'setEncodingTier',
+        'video_quality' => 'setVideoQuality'
     ];
 
     /**
@@ -224,6 +234,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $getters = [
         'input' => 'getInput',
         'playback_policy' => 'getPlaybackPolicy',
+        'advanced_playback_policies' => 'getAdvancedPlaybackPolicies',
         'per_title_encode' => 'getPerTitleEncode',
         'passthrough' => 'getPassthrough',
         'mp4_support' => 'getMp4Support',
@@ -231,7 +242,8 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         'master_access' => 'getMasterAccess',
         'test' => 'getTest',
         'max_resolution_tier' => 'getMaxResolutionTier',
-        'encoding_tier' => 'getEncodingTier'
+        'encoding_tier' => 'getEncodingTier',
+        'video_quality' => 'getVideoQuality'
     ];
 
     /**
@@ -277,6 +289,9 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
 
     public const MP4_SUPPORT_NONE = 'none';
     public const MP4_SUPPORT_STANDARD = 'standard';
+    public const MP4_SUPPORT_CAPPED_1080P = 'capped-1080p';
+    public const MP4_SUPPORT_AUDIO_ONLY = 'audio-only';
+    public const MP4_SUPPORT_AUDIO_ONLYCAPPED_1080P = 'audio-only,capped-1080p';
     public const MASTER_ACCESS_NONE = 'none';
     public const MASTER_ACCESS_TEMPORARY = 'temporary';
     public const MAX_RESOLUTION_TIER__1080P = '1080p';
@@ -284,6 +299,10 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     public const MAX_RESOLUTION_TIER__2160P = '2160p';
     public const ENCODING_TIER_SMART = 'smart';
     public const ENCODING_TIER_BASELINE = 'baseline';
+    public const ENCODING_TIER_PREMIUM = 'premium';
+    public const VIDEO_QUALITY_BASIC = 'basic';
+    public const VIDEO_QUALITY_PLUS = 'plus';
+    public const VIDEO_QUALITY_PREMIUM = 'premium';
 
     /**
      * Gets allowable values of the enum
@@ -295,6 +314,9 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         return [
             self::MP4_SUPPORT_NONE,
             self::MP4_SUPPORT_STANDARD,
+            self::MP4_SUPPORT_CAPPED_1080P,
+            self::MP4_SUPPORT_AUDIO_ONLY,
+            self::MP4_SUPPORT_AUDIO_ONLYCAPPED_1080P,
         ];
     }
 
@@ -335,6 +357,21 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         return [
             self::ENCODING_TIER_SMART,
             self::ENCODING_TIER_BASELINE,
+            self::ENCODING_TIER_PREMIUM,
+        ];
+    }
+
+    /**
+     * Gets allowable values of the enum
+     *
+     * @return string[]
+     */
+    public function getVideoQualityAllowableValues()
+    {
+        return [
+            self::VIDEO_QUALITY_BASIC,
+            self::VIDEO_QUALITY_PLUS,
+            self::VIDEO_QUALITY_PREMIUM,
         ];
     }
 
@@ -358,6 +395,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         //      src: https://github.com/OpenAPITools/openapi-generator/issues/9038
         $this->setIfExists('input', $data ?? [], null);
         $this->setIfExists('playback_policy', $data ?? [], null);
+        $this->setIfExists('advanced_playback_policies', $data ?? [], null);
         $this->setIfExists('per_title_encode', $data ?? [], null);
         $this->setIfExists('passthrough', $data ?? [], null);
         $this->setIfExists('mp4_support', $data ?? [], null);
@@ -366,6 +404,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         $this->setIfExists('test', $data ?? [], null);
         $this->setIfExists('max_resolution_tier', $data ?? [], null);
         $this->setIfExists('encoding_tier', $data ?? [], null);
+        $this->setIfExists('video_quality', $data ?? [], null);
     }
 
     /**
@@ -431,6 +470,15 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
             );
         }
 
+        $allowedValues = $this->getVideoQualityAllowableValues();
+        if (!is_null($this->container['video_quality']) && !in_array($this->container['video_quality'], $allowedValues, true)) {
+            $invalidProperties[] = sprintf(
+                "invalid value '%s' for 'video_quality', must be one of '%s'",
+                $this->container['video_quality'],
+                implode("', '", $allowedValues)
+            );
+        }
+
         return $invalidProperties;
     }
 
@@ -488,7 +536,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets playback_policy
      *
-     * @param \MuxPhp\Models\PlaybackPolicy[]|null $playback_policy An array of playback policy names that you want applied to this asset and available through `playback_ids`. Options include: `\"public\"` (anyone with the playback URL can stream the asset). And `\"signed\"` (an additional access token is required to play the asset). If no playback_policy is set, the asset will have no playback IDs and will therefore not be playable. For simplicity, a single string name can be used in place of the array in the case of only one playback policy.
+     * @param \MuxPhp\Models\PlaybackPolicy[]|null $playback_policy An array of playback policy names that you want applied to this asset and available through `playback_ids`. Options include:  * `\"public\"` (anyone with the playback URL can stream the asset). * `\"signed\"` (an additional access token is required to play the asset).  If no `playback_policy` is set, the asset will have no playback IDs and will therefore not be playable. For simplicity, a single string name can be used in place of the array in the case of only one playback policy.
      *
      * @return self
      */
@@ -500,6 +548,35 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         }
 
         $this->container['playback_policy'] = $playback_policy;
+
+        return $this;
+    }
+
+    /**
+     * Gets advanced_playback_policies
+     *
+     * @return \MuxPhp\Models\CreatePlaybackIDRequest[]|null
+     */
+    public function getAdvancedPlaybackPolicies()
+    {
+        return $this->container['advanced_playback_policies'];
+    }
+
+    /**
+     * Sets advanced_playback_policies
+     *
+     * @param \MuxPhp\Models\CreatePlaybackIDRequest[]|null $advanced_playback_policies An array of playback policy objects that you want applied to this asset and available through `playback_ids`. `advanced_playback_policies` must be used instead of `playback_policy` when creating a DRM playback ID.
+     *
+     * @return self
+     */
+    public function setAdvancedPlaybackPolicies($advanced_playback_policies)
+    {
+
+        if (is_null($advanced_playback_policies)) {
+            throw new \InvalidArgumentException('non-nullable advanced_playback_policies cannot be null');
+        }
+
+        $this->container['advanced_playback_policies'] = $advanced_playback_policies;
 
         return $this;
     }
@@ -577,7 +654,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets mp4_support
      *
-     * @param string|null $mp4_support Specify what level (if any) of support for mp4 playback. In most cases you should use our default HLS-based streaming playback ({playback_id}.m3u8) which can automatically adjust to viewers' connection speeds, but an mp4 can be useful for some legacy devices or downloading for offline playback. See the [Download your videos guide](https://docs.mux.com/guides/enable-static-mp4-renditions) for more information.
+     * @param string|null $mp4_support Specify what level of support for mp4 playback.  * The `capped-1080p` option produces a single MP4 file, called `capped-1080p.mp4`, with the video resolution capped at 1080p. This option produces an `audio.m4a` file for an audio-only asset. * The `audio-only` option produces a single M4A file, called `audio.m4a` for a video or an audio-only asset. MP4 generation will error when this option is specified for a video-only asset. * The `audio-only,capped-1080p` option produces both the `audio.m4a` and `capped-1080p.mp4` files. Only the `capped-1080p.mp4` file is produced for a video-only asset, while only the `audio.m4a` file is produced for an audio-only asset.  The `standard`(deprecated) option produces up to three MP4 files with different levels of resolution (`high.mp4`, `medium.mp4`, `low.mp4`, or `audio.m4a` for an audio-only asset).  MP4 files are not produced for `none` (default).  In most cases you should use our default HLS-based streaming playback (`{playback_id}.m3u8`) which can automatically adjust to viewers' connection speeds, but an mp4 can be useful for some legacy devices or downloading for offline playback. See the [Download your videos guide](https://docs.mux.com/guides/enable-static-mp4-renditions) for more information.
      *
      * @return self
      */
@@ -743,6 +820,7 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
      * Gets encoding_tier
      *
      * @return string|null
+     * @deprecated
      */
     public function getEncodingTier()
     {
@@ -752,9 +830,10 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
     /**
      * Sets encoding_tier
      *
-     * @param string|null $encoding_tier The encoding tier informs the cost, quality, and available platform features for the asset. By default the `smart` encoding tier is used. [See the guide for more details.](https://docs.mux.com/guides/use-encoding-tiers)
+     * @param string|null $encoding_tier This field is deprecated. Please use `video_quality` instead. The encoding tier informs the cost, quality, and available platform features for the asset. The default encoding tier for an account can be set in the Mux Dashboard. [See the video quality guide for more details.](https://docs.mux.com/guides/use-video-quality-levels)
      *
      * @return self
+     * @deprecated
      */
     public function setEncodingTier($encoding_tier)
     {
@@ -774,6 +853,45 @@ class CreateAssetRequest implements ModelInterface, ArrayAccess, \JsonSerializab
         }
 
         $this->container['encoding_tier'] = $encoding_tier;
+
+        return $this;
+    }
+
+    /**
+     * Gets video_quality
+     *
+     * @return string|null
+     */
+    public function getVideoQuality()
+    {
+        return $this->container['video_quality'];
+    }
+
+    /**
+     * Sets video_quality
+     *
+     * @param string|null $video_quality The video quality controls the cost, quality, and available platform features for the asset. The default video quality for an account can be set in the Mux Dashboard. This field replaces the deprecated `encoding_tier` value. [See the video quality guide for more details.](https://docs.mux.com/guides/use-video-quality-levels)
+     *
+     * @return self
+     */
+    public function setVideoQuality($video_quality)
+    {
+        $allowedValues = $this->getVideoQualityAllowableValues();
+        if (!is_null($video_quality) && !in_array($video_quality, $allowedValues, true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Invalid value '%s' for 'video_quality', must be one of '%s'",
+                    $video_quality,
+                    implode("', '", $allowedValues)
+                )
+            );
+        }
+
+        if (is_null($video_quality)) {
+            throw new \InvalidArgumentException('non-nullable video_quality cannot be null');
+        }
+
+        $this->container['video_quality'] = $video_quality;
 
         return $this;
     }

@@ -52,7 +52,7 @@ Kirby::plugin('robinscholz/kirby-mux', [
                 }
             }
 
-            return "https://stream.mux.com/" . $playbackId . "/low.mp4";
+            return "https://stream.mux.com/" . $playbackId . "/capped-1080p.mp4";
         },
         'muxUrlHigh' => function () {
             $assetId = json_decode($this->mux())->id;
@@ -80,15 +80,15 @@ Kirby::plugin('robinscholz/kirby-mux', [
                 }
             }
 
-            $static_renditions = json_decode($this->mux(), true)["static_renditions"];
+            $static_renditions = json_decode($this->mux())->static_renditions;
 
-            return ($static_renditions["status"] == 'ready' && count($static_renditions["files"]) > 1) ? "https://stream.mux.com/" . $playbackId . "/high.mp4" : "https://stream.mux.com/" . $playbackId . "/low.mp4";
+            return ($static_renditions->status == 'ready' && count($static_renditions->files) > 1) ? "https://stream.mux.com/" . $playbackId . "/capped-1080p.mp4" : "https://stream.mux.com/" . $playbackId . "/capped-1080p.mp4";
         },
         'muxUrlStream' => function () {
             $playbackId = json_decode($this->mux())->playback_ids[0]->id;
             return "https://stream.mux.com/" . $playbackId . ".m3u8";
         },
-        'muxThumbnail' => function ($width = null, $height = null, Float $time = null, String $extension = 'jpg') {
+        'muxThumbnail' => function ($width = null, $height = null, $time = null, String $extension = 'jpg') {
             $playbackId = json_decode($this->mux())->playback_ids[0]->id;
             $url = "https://image.mux.com/" . $playbackId . "/thumbnail." . $extension;
 
@@ -260,7 +260,7 @@ Kirby::plugin('robinscholz/kirby-mux', [
                         } else {
                             $url = "https://image.mux.com/" . $result->getData()->getPlaybackIds()[0]->getId() . "/thumbnail.jpg?time=0";
                             $imagedata = file_get_contents($url);
-                            F::write($file->parent()->root() . '/' . $file->name() . '-thumbnail.jpg', $imagedata);
+                            F::write($newFile->parent()->root() . '/' . $newFile->name() . '-thumbnail.jpg', $imagedata);
                             $newFile = $newFile->update([
                                 'mux' => $waitingAsset->getData(),
                             ]);

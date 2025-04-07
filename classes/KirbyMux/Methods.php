@@ -6,10 +6,11 @@ use MuxPhp;
 
 class Methods
 {
-    public static function upload($assetsApi, $url) {
+    public static function upload($assetsApi, $url)
+    {
         $file = $_ENV['MUX_DEV'] === 'true' ? "https://storage.googleapis.com/muxdemofiles/mux-video-intro.mp4" : $url;
         $input = new MuxPhp\Models\InputSettings(["url" => $file]);
-        $createAssetRequest = new MuxPhp\Models\CreateAssetRequest(["input" => $input, "playback_policy" => [MuxPhp\Models\PlaybackPolicy::_PUBLIC], 'mp4_support' => 'standard' ]);
+        $createAssetRequest = new MuxPhp\Models\CreateAssetRequest(["input" => $input, "playback_policy" => [MuxPhp\Models\PlaybackPolicy::_PUBLIC], 'mp4_support' => 'capped-1080p']);
         $result = $assetsApi->createAsset($createAssetRequest);
 
         return $result;
