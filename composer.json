@@ -19,8 +19,7 @@
     ],
     "require": {
         "getkirby/composer-installer": "^1.2",
-        "muxinc/mux-php": "^5.1",
-        "vlucas/phpdotenv": "^5.4"
+        "muxinc/mux-php": "^5.1"
     },
     "autoload": {
         "psr-4": {

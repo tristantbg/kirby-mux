@@ -1,10 +1,12 @@
 <?php
 
 @include_once __DIR__ . '/vendor/autoload.php';
-Dotenv\Dotenv::createImmutable(__DIR__)->load(); // TODO: Add configurable path for .env
 
 Kirby::plugin('tristantbg/kirby-mux', [
     'options' => [
+        'tokenId' => '',
+        'tokenSecret' => '',
+        'dev' => false,
         'optimizeDiskSpace' => false
     ],
     'translations' => [

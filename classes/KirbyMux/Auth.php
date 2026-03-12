@@ -12,8 +12,8 @@ class Auth
         kirby()->impersonate('kirby');
         // Authentication setup
         $config = MuxPhp\Configuration::getDefaultConfiguration()
-            ->setUsername($_ENV['MUX_TOKEN_ID'])
-            ->setPassword($_ENV['MUX_TOKEN_SECRET']);
+            ->setUsername(option('tristantbg.kirby-mux.tokenId'))
+            ->setPassword(option('tristantbg.kirby-mux.tokenSecret'));
 
         // API client initialization
         $assetsApi = new MuxPhp\Api\AssetsApi(

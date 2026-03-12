@@ -22,34 +22,41 @@ composer require tristantbg/kirby-mux
 
 ## Configuration
 
-Add a `.env` file to the plugin directory (`site/plugins/kirby-mux/.env`) with the following properties:
+Add your Mux API credentials to your Kirby config file:
 
-| Key              | Type      | Description                                   |
-| ---------------- | --------- | --------------------------------------------- |
-| MUX_TOKEN_ID     | `String`  | Your Mux API Access Token ID                  |
-| MUX_TOKEN_SECRET | `String`  | Your Mux API Access Token Secret              |
-| MUX_DEV          | `Boolean` | Use a test video instead of the actual upload |
-
-> **NOTE:** A `.env.example` file is included in the plugin.
+```php
+// site/config/config.php
+return [
+  'tristantbg.kirby-mux' => [
+    'tokenId' => 'XXX', // Your Mux API Access Token ID
+    'tokenSecret' => 'XXX', // Your Mux API Secret Key
+  ],
+];
+```
 
 ### Options
 
 | Option              | Type      | Default | Description                                               |
 | ------------------- | --------- | ------- | --------------------------------------------------------- |
+| `tokenId`           | `String`  | `''`    | Your Mux API Access Token ID                              |
+| `tokenSecret`       | `String`  | `''`    | Your Mux API Secret Key                                   |
+| `dev`               | `Boolean` | `false` | Use a test video instead of the actual upload             |
 | `optimizeDiskSpace` | `Boolean` | `false` | Download the low-res MP4 locally and replace the original |
 
-Set options in your Kirby config:
+### Dev Mode
+
+Set `dev` to `true` for local development. Instead of the actual video, the plugin will upload a test video to Mux. This is necessary since videos need to be publicly accessible for Mux to import them.
 
 ```php
 // site/config/config.php
 return [
-  'tristantbg.kirby-mux.optimizeDiskSpace' => true,
+  'tristantbg.kirby-mux' => [
+    'tokenId' => 'XXX',
+    'tokenSecret' => 'XXX',
+    'dev' => true,
+  ],
 ];
 ```
-
-### MUX_DEV
-
-Set this to `true` for local development. Instead of the actual video, the plugin will upload a test video to Mux. This is necessary since videos need to be publicly accessible for Mux to import them.
 
 ## Static Renditions
 

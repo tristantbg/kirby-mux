@@ -9,7 +9,7 @@ class Methods
 {
     public static function upload($assetsApi, $url)
     {
-        $file = $_ENV['MUX_DEV'] === 'true' ? "https://storage.googleapis.com/muxdemofiles/mux-video-intro.mp4" : $url;
+        $file = option('tristantbg.kirby-mux.dev') ? "https://storage.googleapis.com/muxdemofiles/mux-video-intro.mp4" : $url;
         $input = new MuxPhp\Models\InputSettings(["url" => $file]);
         $createAssetRequest = new MuxPhp\Models\CreateAssetRequest([
             "input" => $input,
