@@ -1,0 +1,21 @@
+title:
+  de: Mux video
+  en: Mux video
+
+accept:
+  mime: video/*
+  type: video
+
+fields:
+  mux:
+    type: hidden
+  loopStart:
+    label: Loop Start
+    type: number
+    after: sec.
+    width: 1/2
+  loopEnd:
+    label: Loop End
+    type: number
+    after: sec.
+    width: 1/2

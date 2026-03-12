@@ -1,0 +1,39 @@
+{
+    "name": "tristantbg/kirby-mux",
+    "description": "Upload videos directly to mux",
+    "type": "kirby-plugin",
+    "keywords": [
+        "kirby",
+        "mux",
+        "video",
+        "stream"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/tristantbg/kirby-mux#readme",
+    "authors": [
+        {
+            "name": "Tristan Bagot",
+            "email": "hello@tristanbagot.com",
+            "homepage": "https://tristanbagot.com"
+        }
+    ],
+    "require": {
+        "getkirby/composer-installer": "^1.2",
+        "muxinc/mux-php": "^5.1",
+        "vlucas/phpdotenv": "^5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "KirbyMux\\": "classes/KirbyMux/"
+        }
+    },
+    "scripts": {
+        "dist": "composer install --no-dev --optimize-autoloader"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "getkirby/composer-installer": true
+        }
+    }
+}

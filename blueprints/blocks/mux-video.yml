@@ -1,0 +1,19 @@
+name: field.blocks.video.name
+icon: video
+fields:
+  video:
+    label: field.blocks.video.name
+    type: files
+    multiple: false
+    query: page.files.template('video')
+    image:
+      back: black
+    uploads:
+      template: video
+    width: 3/4
+  thumbnail:
+    label: field.blocks.mux-video.thumbnail
+    help: field.blocks.mux-video.thumbnail.help
+    type: number
+    default: 0
+    width: 1/4
