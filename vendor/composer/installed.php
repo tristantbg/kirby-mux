@@ -3,11 +3,11 @@
         'name' => 'tristantbg/kirby-mux',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '05c34700f2963867d39dc3509d248548a9421fcc',
+        'reference' => '188e4d95ed556387d7d4620576ea6d4d66dc850d',
         'type' => 'kirby-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => false,
+        'dev' => true,
     ),
     'versions' => array(
         'getkirby/composer-installer' => array(
@@ -121,7 +121,7 @@
         'tristantbg/kirby-mux' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '05c34700f2963867d39dc3509d248548a9421fcc',
+            'reference' => '188e4d95ed556387d7d4620576ea6d4d66dc850d',
             'type' => 'kirby-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
