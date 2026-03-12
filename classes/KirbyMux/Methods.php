@@ -14,7 +14,6 @@ class Methods
         $createAssetRequest = new MuxPhp\Models\CreateAssetRequest([
             "input" => $input,
             "playback_policy" => [MuxPhp\Models\PlaybackPolicy::_PUBLIC],
-            'mp4_support' => 'capped-1080p',
             'static_renditions' => [
                 new MuxPhp\Models\CreateStaticRenditionRequest(['resolution' => '270p']),
                 new MuxPhp\Models\CreateStaticRenditionRequest(['resolution' => '720p']),
