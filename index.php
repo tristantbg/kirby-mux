@@ -25,24 +25,33 @@ Kirby::plugin('tristantbg/kirby-mux', [
     ],
     'fileMethods' => [
         'muxPlaybackId' => function () {
-            return json_decode($this->mux())->playback_ids[0]->id;
+            $data = json_decode($this->mux());
+            return $data->playback_ids[0]->id ?? null;
         },
         'muxUrlLow' => function () {
+            $playbackId = $this->muxPlaybackId();
+            if (!$playbackId) throw new Exception('No Mux playback ID found for file: ' . $this->filename());
             KirbyMux\Methods::ensureRenditionsReady($this);
-            return "https://stream.mux.com/" . $this->muxPlaybackId() . "/270p.mp4";
+            return "https://stream.mux.com/{$playbackId}/270p.mp4";
         },
         'muxUrlHigh' => function () {
+            $playbackId = $this->muxPlaybackId();
+            if (!$playbackId) throw new Exception('No Mux playback ID found for file: ' . $this->filename());
             KirbyMux\Methods::ensureRenditionsReady($this);
-            $renditions = json_decode($this->mux(), true)["static_renditions"];
-            $resolution = ($renditions["status"] === 'ready' && count($renditions["files"]) > 1) ? '1080p' : '720p';
-            return "https://stream.mux.com/" . $this->muxPlaybackId() . "/{$resolution}.mp4";
+            $data = json_decode($this->mux(), true);
+            $renditions = $data["static_renditions"] ?? null;
+            $resolution = ($renditions && $renditions["status"] === 'ready' && count($renditions["files"]) > 1) ? '1080p' : '720p';
+            return "https://stream.mux.com/{$playbackId}/{$resolution}.mp4";
         },
         'muxUrlStream' => function () {
-            return "https://stream.mux.com/" . $this->muxPlaybackId() . ".m3u8";
+            $playbackId = $this->muxPlaybackId();
+            if (!$playbackId) throw new Exception('No Mux playback ID found for file: ' . $this->filename());
+            return "https://stream.mux.com/{$playbackId}.m3u8";
         },
         'muxThumbnail' => function ($width = null, $height = null, $time = null, String $extension = 'jpg') {
-            $playbackId = json_decode($this->mux())->playback_ids[0]->id;
-            $url = "https://image.mux.com/" . $playbackId . "/thumbnail." . $extension;
+            $playbackId = $this->muxPlaybackId();
+            if (!$playbackId) throw new Exception('No Mux playback ID found for file: ' . $this->filename());
+            $url = "https://image.mux.com/{$playbackId}/thumbnail.{$extension}";
 
             $params = [];
             if ($width) {
@@ -61,8 +70,9 @@ Kirby::plugin('tristantbg/kirby-mux', [
             return $url;
         },
         'muxThumbnailAnimated' => function ($width = null, $height = null, $start = null, $end = null, $fps = null, String $extension = 'gif') {
-            $playbackId = json_decode($this->mux())->playback_ids[0]->id;
-            $url = "https://image.mux.com/" . $playbackId . "/animated." . $extension;
+            $playbackId = $this->muxPlaybackId();
+            if (!$playbackId) throw new Exception('No Mux playback ID found for file: ' . $this->filename());
+            $url = "https://image.mux.com/{$playbackId}/animated.{$extension}";
 
             $params = [];
             if ($width) {
@@ -89,7 +99,9 @@ Kirby::plugin('tristantbg/kirby-mux', [
             $muxThumbnail = $this->parent()->file(F::name($this->filename()) . '-thumbnail.jpg');
 
             if (!$muxThumbnail) {
-                $url = "https://image.mux.com/" . json_decode($this->mux())->playback_ids[0]->id . "/thumbnail.jpg";
+                $playbackId = $this->muxPlaybackId();
+                if (!$playbackId) throw new Exception('No Mux playback ID found for file: ' . $this->filename());
+                $url = "https://image.mux.com/{$playbackId}/thumbnail.jpg";
                 $imagedata = file_get_contents($url);
                 F::write($this->parent()->root() . '/' . $this->name() . '-thumbnail.jpg', $imagedata);
                 $muxThumbnail = $this->parent()->file(F::name($this->filename()) . '-thumbnail.jpg');
