@@ -120,11 +120,13 @@ The view shows, for each video:
 - The filename and the page it belongs to
 - The processing **status** (`ready`, `preparing`, `errored`, or `missing` when there is no stored Mux data)
 - The **static renditions** status
-- The Mux **asset id**
-- A button to **open the file in the Panel**
-- A button to **open the asset in the Mux dashboard** (shown only when `environmentId` is configured)
+- A button to **open the asset in the Mux dashboard** (deep-links to the asset when `environmentId` is configured, otherwise opens the general dashboard)
 - A **Refetch** button to pull the latest data for a single video directly from the Mux API
+- A button to **open the file in the Panel**
+- A header **filter** to show only videos whose renditions are not yet `ready`
 - A **Refresh** button to reload the list from the stored data
+
+Videos are sorted by last modification time, newest first.
 
 The list reads stored file data only — it never calls the Mux API, so it does not count against your rate limits.
 
@@ -132,12 +134,12 @@ The list reads stored file data only — it never calls the Mux API, so it does 
 
 If a video is missing its Mux data (status `missing`) — for example it was uploaded before webhooks were configured, or while a webhook was down — use the per-row **Refetch** button to recover it. Refetching makes a direct Mux API call:
 
-- If the video already has a stored asset id, the latest asset data is pulled and saved.
+- If the video already has a stored asset id, the latest asset data is pulled and saved. If the asset's **static renditions are `disabled`**, they are re-enabled (270p, 720p, 1080p) so the MP4 download URLs become available again.
 - If the video has no Mux data at all, it is re-uploaded to Mux, creating a fresh asset (with the passthrough so future webhooks resolve correctly).
 
 Because refetching calls the Mux API directly, trigger it manually rather than relying on it for normal rendering.
 
-To enable the Mux dashboard links, set your environment id:
+To enable deep links straight to the asset in the Mux dashboard, set your environment id (otherwise the button opens the general dashboard):
 
 ```php
 // site/config/config.php

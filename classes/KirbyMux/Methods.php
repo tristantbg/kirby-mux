@@ -74,7 +74,9 @@ class Methods
      * Refetch the Mux data for a single file directly from the Mux API.
      *
      * - If the file already has a stored asset id, the latest asset data is
-     *   pulled with a single `getAsset` call and persisted.
+     *   pulled with a single `getAsset` call and persisted. If the asset's
+     *   static renditions are `disabled`, they are re-enabled (270p, 720p,
+     *   1080p) before the data is persisted.
      * - If the file has no Mux data at all, the file is (re-)uploaded to Mux,
      *   creating a fresh asset with the passthrough so future webhooks resolve.
      *
@@ -101,7 +103,16 @@ class Methods
         if ($assetId) {
             // Pull the latest asset payload from Mux and persist it.
             $response = $assetsApi->getAsset($assetId);
-            $file     = $file->update(['mux' => $response->getData()]);
+            $data     = $response->getData();
+
+            // If static renditions were disabled, re-enable them so the MP4
+            // download URLs become available again.
+            if (($data['static_renditions']['status'] ?? null) === 'disabled') {
+                static::enableStaticRenditions($assetsApi, $assetId);
+                $data = $assetsApi->getAsset($assetId)->getData();
+            }
+
+            $file = $file->update(['mux' => $data]);
         } else {
             // No asset stored yet: create a fresh Mux asset from the file.
             $result = static::upload($assetsApi, $file->url(), $file);
@@ -119,7 +130,28 @@ class Methods
     }
 
     /**
-     * Build the Mux dashboard asset URL when an environment id is configured.
+     * Request the standard static MP4 renditions (270p, 720p, 1080p) for an
+     * existing Mux asset. Used to re-enable renditions that were disabled.
+     */
+    public static function enableStaticRenditions($assetsApi, string $assetId): void
+    {
+        foreach (['270p', '720p', '1080p'] as $resolution) {
+            $request = new MuxPhp\Models\CreateStaticRenditionRequest(['resolution' => $resolution]);
+            try {
+                $assetsApi->createAssetStaticRendition($assetId, $request);
+            } catch (\Exception $e) {
+                // A rendition at this resolution may already exist; ignore and
+                // continue with the remaining resolutions.
+            }
+        }
+    }
+
+    /**
+     * Build the Mux dashboard asset URL.
+     *
+     * When an `environmentId` is configured the URL deep-links straight to the
+     * asset. Otherwise it falls back to the general Mux dashboard so the link
+     * is still shown (Mux redirects to the user's default environment).
      */
     public static function dashboardUrl(?string $assetId): ?string
     {
@@ -129,7 +161,7 @@ class Methods
 
         $environmentId = option('tristantbg.kirby-mux.environmentId');
         if (empty($environmentId)) {
-            return null;
+            return 'https://dashboard.mux.com/';
         }
 
         return "https://dashboard.mux.com/environments/{$environmentId}/assets/{$assetId}";
