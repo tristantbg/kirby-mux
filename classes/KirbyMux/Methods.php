@@ -117,8 +117,14 @@ class Methods
             return null;
         }
 
-        // Legacy object format: a single status string.
+        // Legacy object format: `{ status, files }`. Mux sometimes reports the
+        // status as `disabled` even though the `files` array already contains
+        // finished renditions, so treat any non-empty `files` list as ready.
         if (isset($renditions['status']) && is_string($renditions['status'])) {
+            if (!empty($renditions['files']) && is_array($renditions['files'])) {
+                return 'ready';
+            }
+
             return $renditions['status'];
         }
 
