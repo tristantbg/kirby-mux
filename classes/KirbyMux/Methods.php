@@ -5,6 +5,7 @@ namespace KirbyMux;
 use Kirby\Cms\File;
 use Kirby\Http\Response;
 use MuxPhp;
+use GuzzleHttp;
 
 class Methods
 {
@@ -67,16 +68,93 @@ class Methods
      */
     public static function processAfterUpload($assetsApi, File $file, $result): File
     {
-        return $file->update(['mux' => $result->getData()]);
+        // Persist the raw asset JSON so the exact API shape (e.g. the
+        // `static_renditions` array) is preserved. Fall back to the SDK model
+        // if the follow-up fetch fails for any reason.
+        try {
+            $data = static::fetchAssetData($result->getData()->getId());
+        } catch (\Exception $e) {
+            $data = null;
+        }
+
+        return $file->update(['mux' => $data ? json_encode($data) : $result->getData()]);
+    }
+
+    /**
+     * Fetch the raw asset payload from the Mux API as a plain array, preserving
+     * the exact response shape. The SDK models can lose information (e.g. the
+     * `static_renditions` array, which newer API versions return instead of an
+     * object), so the JSON is read directly.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function fetchAssetData(string $assetId): ?array
+    {
+        $client = new GuzzleHttp\Client();
+        $response = $client->get("https://api.mux.com/video/v1/assets/{$assetId}", [
+            'auth' => [
+                option('tristantbg.kirby-mux.tokenId'),
+                option('tristantbg.kirby-mux.tokenSecret'),
+            ],
+        ]);
+
+        $json = json_decode((string) $response->getBody(), true);
+
+        return $json['data'] ?? null;
+    }
+
+    /**
+     * Resolve the overall static-renditions status from a Mux asset payload,
+     * supporting both the legacy object shape (`{ status, files }`) and the
+     * newer array shape (`[{ status, resolution, ... }, ...]`).
+     *
+     * @param array<string, mixed>|null $mux
+     */
+    public static function renditionsStatus(?array $mux): ?string
+    {
+        $renditions = $mux['static_renditions'] ?? null;
+        if ($renditions === null) {
+            return null;
+        }
+
+        // Legacy object format: a single status string.
+        if (isset($renditions['status']) && is_string($renditions['status'])) {
+            return $renditions['status'];
+        }
+
+        // Newer array format: derive an overall status from the entries,
+        // ignoring resolutions Mux skipped (e.g. above the source resolution).
+        if (is_array($renditions)) {
+            $statuses = [];
+            foreach ($renditions as $rendition) {
+                if (is_array($rendition) && isset($rendition['status']) && $rendition['status'] !== 'skipped') {
+                    $statuses[] = $rendition['status'];
+                }
+            }
+
+            if (empty($statuses)) {
+                return 'disabled';
+            }
+            if (in_array('errored', $statuses, true)) {
+                return 'errored';
+            }
+            if (in_array('preparing', $statuses, true)) {
+                return 'preparing';
+            }
+
+            return 'ready';
+        }
+
+        return null;
     }
 
     /**
      * Refetch the Mux data for a single file directly from the Mux API.
      *
      * - If the file already has a stored asset id, the latest asset data is
-     *   pulled with a single `getAsset` call and persisted. If the asset's
-     *   static renditions are `disabled`, they are re-enabled (270p, 720p,
-     *   1080p) before the data is persisted.
+     *   pulled (as raw JSON) and persisted. If the asset's static renditions
+     *   are `disabled`, they are re-enabled (270p, 720p, 1080p) before the data
+     *   is persisted.
      * - If the file has no Mux data at all, the file is (re-)uploaded to Mux,
      *   creating a fresh asset with the passthrough so future webhooks resolve.
      *
@@ -101,18 +179,18 @@ class Methods
         $assetId = is_array($raw) ? ($raw['id'] ?? null) : null;
 
         if ($assetId) {
-            // Pull the latest asset payload from Mux and persist it.
-            $response = $assetsApi->getAsset($assetId);
-            $data     = $response->getData();
+            // Pull the latest asset payload from Mux as raw JSON so the exact
+            // `static_renditions` shape is preserved.
+            $data = static::fetchAssetData($assetId);
 
             // If static renditions were disabled, re-enable them so the MP4
             // download URLs become available again.
-            if (($data['static_renditions']['status'] ?? null) === 'disabled') {
+            if (static::renditionsStatus($data) === 'disabled') {
                 static::enableStaticRenditions($assetsApi, $assetId, $data);
-                $data = $assetsApi->getAsset($assetId)->getData();
+                $data = static::fetchAssetData($assetId);
             }
 
-            $file = $file->update(['mux' => $data]);
+            $file = $file->update(['mux' => json_encode($data)]);
         } else {
             // No asset stored yet: create a fresh Mux asset from the file.
             $result = static::upload($assetsApi, $file->url(), $file);
@@ -256,7 +334,7 @@ class Methods
         $assetId         = $mux['id'] ?? null;
         $status          = $mux['status'] ?? null;
         $playbackId      = $mux['playback_ids'][0]['id'] ?? null;
-        $renditions      = $mux['static_renditions']['status'] ?? null;
+        $renditions      = static::renditionsStatus($mux);
         $hasMuxData      = $assetId !== null;
 
         $parent = $file->parent();
@@ -326,7 +404,7 @@ class Methods
 
         $status          = $data['status'] ?? null;
         $playbackId      = $data['playback_ids'][0]['id'] ?? null;
-        $renditionsReady = ($data['static_renditions']['status'] ?? null) === 'ready';
+        $renditionsReady = static::renditionsStatus($data) === 'ready';
 
         if ($status === 'ready' && $playbackId) {
             static::saveThumbnail($file, $playbackId);
