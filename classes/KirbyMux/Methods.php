@@ -139,10 +139,11 @@ class Methods
      * (not an error). If every request fails for a real reason, the combined
      * error is thrown so the caller can surface it.
      *
-     * @param array<string, mixed>|null $asset The current asset payload, used
-     *                                          to detect legacy `mp4_support`.
+     * @param array<string, mixed>|\MuxPhp\Models\Asset|null $asset The current
+     *        asset payload (array or Mux model), used to detect legacy
+     *        `mp4_support`.
      */
-    public static function enableStaticRenditions($assetsApi, string $assetId, ?array $asset = null): void
+    public static function enableStaticRenditions($assetsApi, string $assetId, $asset = null): void
     {
         // The deprecated `mp4_support` parameter and the `static_renditions`
         // array cannot coexist on an asset. Disable it first when present.
