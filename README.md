@@ -36,13 +36,14 @@ return [
 
 ### Options
 
-| Option              | Type      | Default | Description                                               |
-| ------------------- | --------- | ------- | --------------------------------------------------------- |
-| `tokenId`           | `String`  | `''`    | Your Mux API Access Token ID                              |
-| `tokenSecret`       | `String`  | `''`    | Your Mux API Secret Key                                   |
-| `webhookSecret`     | `String`  | `''`    | Your Mux webhook signing secret (required for webhooks)   |
-| `dev`               | `Boolean` | `false` | Use a test video instead of the actual upload             |
-| `optimizeDiskSpace` | `Boolean` | `false` | Download the low-res MP4 locally and replace the original |
+| Option              | Type      | Default | Description                                                       |
+| ------------------- | --------- | ------- | ----------------------------------------------------------------- |
+| `tokenId`           | `String`  | `''`    | Your Mux API Access Token ID                                      |
+| `tokenSecret`       | `String`  | `''`    | Your Mux API Secret Key                                           |
+| `webhookSecret`     | `String`  | `''`    | Your Mux webhook signing secret (required for webhooks)           |
+| `environmentId`     | `String`  | `''`    | Your Mux environment id, used to link assets to the Mux dashboard |
+| `dev`               | `Boolean` | `false` | Use a test video instead of the actual upload                     |
+| `optimizeDiskSpace` | `Boolean` | `false` | Download the low-res MP4 locally and replace the original         |
 
 ### Dev Mode
 
@@ -109,9 +110,36 @@ When Mux finishes processing an asset (status `ready`) or its static renditions,
 
 The plugin automatically requests static MP4 renditions at **270p**, **720p**, and **1080p** for every uploaded video.
 
-## File Methods
+## Panel View
 
-All methods are available on Kirby `File` objects with a `mux` field.
+The plugin adds a **Mux** entry to the Panel menu with an overview of every Mux video file across the site. It is useful for spotting videos whose `mux` field was never populated (e.g. uploaded before webhooks were configured, or while a webhook was down).
+
+The view shows, for each video:
+
+- A thumbnail (when a playback id is available)
+- The filename and the page it belongs to
+- The processing **status** (`ready`, `preparing`, `errored`, or `missing` when there is no stored Mux data)
+- The **static renditions** status
+- The Mux **asset id**
+- A button to **open the file in the Panel**
+- A button to **open the asset in the Mux dashboard** (shown only when `environmentId` is configured)
+- A **Refresh** button to reload the list from the stored data
+
+The list reads stored file data only — it never calls the Mux API, so it does not count against your rate limits.
+
+To enable the Mux dashboard links, set your environment id:
+
+```php
+// site/config/config.php
+return [
+  'tristantbg.kirby-mux' => [
+    // …
+    'environmentId' => 'XXX', // from your Mux dashboard URL
+  ],
+];
+```
+
+## File Methods
 
 ### `$file->muxPlaybackId()`
 

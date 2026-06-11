@@ -71,6 +71,97 @@ class Methods
     }
 
     /**
+     * Build the Mux dashboard asset URL when an environment id is configured.
+     */
+    public static function dashboardUrl(?string $assetId): ?string
+    {
+        if (empty($assetId)) {
+            return null;
+        }
+
+        $environmentId = option('tristantbg.kirby-mux.environmentId');
+        if (empty($environmentId)) {
+            return null;
+        }
+
+        return "https://dashboard.mux.com/environments/{$environmentId}/assets/{$assetId}";
+    }
+
+    /**
+     * Collect all Mux video files across the site for the Panel view.
+     * Reads stored data only and never calls the Mux API.
+     *
+     * @return array{videos: array<int, array<string, mixed>>, stats: array<string, int>}
+     */
+    public static function panelVideos(): array
+    {
+        $kirby = kirby();
+        $kirby->impersonate('kirby');
+
+        $videos = [];
+
+        $collect = function ($files) use (&$videos) {
+            foreach ($files as $file) {
+                if ($file->template() !== 'mux-video' && $file->type() !== 'video') {
+                    continue;
+                }
+                $videos[] = static::videoData($file);
+            }
+        };
+
+        // Site-level files.
+        $collect($kirby->site()->files());
+
+        // Files attached to every page (including drafts).
+        foreach ($kirby->site()->index(true) as $page) {
+            $collect($page->files());
+        }
+
+        $stats = [
+            'total'   => count($videos),
+            'ready'   => count(array_filter($videos, fn($v) => $v['status'] === 'ready')),
+            'missing' => count(array_filter($videos, fn($v) => $v['hasMuxData'] === false)),
+        ];
+
+        return ['videos' => $videos, 'stats' => $stats];
+    }
+
+    /**
+     * Build the Panel-facing data array for a single video file.
+     *
+     * @return array<string, mixed>
+     */
+    public static function videoData(File $file): array
+    {
+        $raw = $file->mux()->isNotEmpty() ? json_decode($file->mux(), true) : null;
+        $mux = is_array($raw) ? $raw : null;
+
+        $assetId         = $mux['id'] ?? null;
+        $status          = $mux['status'] ?? null;
+        $playbackId      = $mux['playback_ids'][0]['id'] ?? null;
+        $renditions      = $mux['static_renditions']['status'] ?? null;
+        $hasMuxData      = $assetId !== null;
+
+        $parent = $file->parent();
+
+        return [
+            'id'               => $file->id(),
+            'filename'         => $file->filename(),
+            'panelUrl'         => $file->panel()->url(true),
+            'parentTitle'      => method_exists($parent, 'title') ? (string) $parent->title() : 'Site',
+            'parentUrl'        => method_exists($parent, 'panel') ? $parent->panel()->url(true) : null,
+            'hasMuxData'       => $hasMuxData,
+            'assetId'          => $assetId,
+            'status'           => $hasMuxData ? ($status ?? 'unknown') : 'missing',
+            'playbackId'       => $playbackId,
+            'renditionsStatus' => $renditions,
+            'thumbnail'        => $playbackId ? "https://image.mux.com/{$playbackId}/thumbnail.jpg?width=160" : null,
+            'streamUrl'        => $playbackId ? "https://stream.mux.com/{$playbackId}.m3u8" : null,
+            'dashboardUrl'     => static::dashboardUrl($assetId),
+        ];
+    }
+
+    /**
      * Handle an incoming Mux webhook: verify the signature, find the matching
      * Kirby file via the asset passthrough, and persist the latest asset data.
      */

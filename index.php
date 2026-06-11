@@ -7,6 +7,7 @@ Kirby::plugin('tristantbg/kirby-mux', [
         'tokenId' => '',
         'tokenSecret' => '',
         'webhookSecret' => '',
+        'environmentId' => '',
         'dev' => false,
         'optimizeDiskSpace' => false
     ],
@@ -176,6 +177,39 @@ Kirby::plugin('tristantbg/kirby-mux', [
             'action' => function () {
                 return KirbyMux\Methods::handleWebhook();
             }
+        ]
+    ],
+    'areas' => [
+        'mux' => function () {
+            return [
+                'label' => 'Mux',
+                'icon' => 'video',
+                'menu' => true,
+                'link' => 'mux',
+                'views' => [
+                    [
+                        'pattern' => 'mux',
+                        'action' => function () {
+                            return [
+                                'component' => 'k-mux-view',
+                                'title' => 'Mux',
+                                'props' => KirbyMux\Methods::panelVideos()
+                            ];
+                        }
+                    ]
+                ]
+            ];
+        }
+    ],
+    'api' => [
+        'routes' => [
+            [
+                'pattern' => 'mux/videos',
+                'method' => 'GET',
+                'action' => function () {
+                    return KirbyMux\Methods::panelVideos();
+                }
+            ]
         ]
     ]
 ]);
