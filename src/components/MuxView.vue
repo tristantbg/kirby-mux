@@ -4,6 +4,14 @@
       Mux Videos
       <template #buttons>
         <k-button
+          :icon="filterPending ? 'check' : 'filter'"
+          variant="filled"
+          size="sm"
+          @click="filterPending = !filterPending"
+        >
+          {{ filterPending ? "Show all" : "Renditions not ready" }}
+        </k-button>
+        <k-button
           icon="refresh"
           variant="filled"
           size="sm"
@@ -35,6 +43,15 @@
       <template #options="{ row }">
         <k-button-group>
           <k-button
+            v-if="row.dashboardUrl"
+            icon="open"
+            :link="row.dashboardUrl"
+            target="_blank"
+            size="xs"
+            variant="filled"
+            title="Open asset in Mux dashboard"
+          />
+          <k-button
             icon="refresh"
             size="xs"
             variant="filled"
@@ -49,15 +66,6 @@
             variant="filled"
             title="Open file in Panel"
           />
-          <k-button
-            v-if="row.dashboardUrl"
-            icon="open"
-            :link="row.dashboardUrl"
-            target="_blank"
-            size="xs"
-            variant="filled"
-            title="Open asset in Mux dashboard"
-          />
         </k-button-group>
       </template>
     </k-table>
@@ -65,7 +73,11 @@
     <k-empty
       v-else-if="!loading"
       icon="video"
-      text="No Mux video files found."
+      :text="
+        filterPending
+          ? 'No videos with pending renditions.'
+          : 'No Mux video files found.'
+      "
     />
   </k-panel-inside>
 </template>
@@ -82,6 +94,7 @@ export default {
       summary: this.stats,
       loading: false,
       refetching: null,
+      filterPending: false,
     };
   },
   computed: {
@@ -110,14 +123,17 @@ export default {
       return {
         thumbnail: { label: "", type: "html", width: "1/12" },
         filename: { label: "File", type: "html", width: "3/12" },
-        parent: { label: "Page", type: "html", width: "2/12" },
+        parent: { label: "Page", type: "html", width: "3/12" },
         status: { label: "Status", type: "html", width: "2/12" },
         renditions: { label: "Renditions", type: "html", width: "2/12" },
-        asset: { label: "Asset ID", type: "html", width: "2/12" },
       };
     },
+    filteredItems() {
+      if (!this.filterPending) return this.items;
+      return this.items.filter((video) => video.renditionsStatus !== "ready");
+    },
     rows() {
-      return this.items.map((video) => ({
+      return this.filteredItems.map((video) => ({
         id: video.id,
         thumbnail: video.thumbnail
           ? `<img src="${video.thumbnail}" alt="" style="width:56px;height:32px;object-fit:cover;border-radius:var(--rounded-sm);" />`
@@ -128,7 +144,6 @@ export default {
         parent: this.escape(video.parentTitle || "—"),
         status: this.statusBadge(video),
         renditions: this.renditionsBadge(video),
-        asset: this.assetCell(video),
         panelUrl: video.panelUrl,
         dashboardUrl: video.dashboardUrl,
       }));
@@ -174,16 +189,6 @@ export default {
         ? { bg: "var(--color-green-300)", fg: "var(--color-green-900)" }
         : { bg: "var(--color-gray-300)", fg: "var(--color-gray-900)" };
       return this.badge(video.renditionsStatus || "pending", color);
-    },
-    assetCell(video) {
-      if (!video.assetId) return "—";
-      const code = `<code style="font-size:var(--text-xs)">${this.escape(
-        video.assetId
-      )}</code>`;
-      if (!video.dashboardUrl) return code;
-      return `<a href="${this.escape(
-        video.dashboardUrl
-      )}" target="_blank" rel="noopener noreferrer" title="Open asset in Mux dashboard">${code}</a>`;
     },
     async load() {
       this.loading = true;

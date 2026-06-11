@@ -1,6 +1,6 @@
 {
   "name": "kirby-mux",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "private": true,
   "scripts": {
     "dev": "npx -y kirbyup src/index.js --watch",
