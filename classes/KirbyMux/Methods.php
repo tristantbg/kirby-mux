@@ -108,7 +108,7 @@ class Methods
             // If static renditions were disabled, re-enable them so the MP4
             // download URLs become available again.
             if (($data['static_renditions']['status'] ?? null) === 'disabled') {
-                static::enableStaticRenditions($assetsApi, $assetId);
+                static::enableStaticRenditions($assetsApi, $assetId, $data);
                 $data = $assetsApi->getAsset($assetId)->getData();
             }
 
@@ -132,17 +132,47 @@ class Methods
     /**
      * Request the standard static MP4 renditions (270p, 720p, 1080p) for an
      * existing Mux asset. Used to re-enable renditions that were disabled.
+     *
+     * Assets created with the deprecated `mp4_support` parameter cannot have a
+     * `static_renditions` array at the same time, so `mp4_support` is disabled
+     * first when present. Resolutions higher than the source are skipped by Mux
+     * (not an error). If every request fails for a real reason, the combined
+     * error is thrown so the caller can surface it.
+     *
+     * @param array<string, mixed>|null $asset The current asset payload, used
+     *                                          to detect legacy `mp4_support`.
      */
-    public static function enableStaticRenditions($assetsApi, string $assetId): void
+    public static function enableStaticRenditions($assetsApi, string $assetId, ?array $asset = null): void
     {
-        foreach (['270p', '720p', '1080p'] as $resolution) {
+        // The deprecated `mp4_support` parameter and the `static_renditions`
+        // array cannot coexist on an asset. Disable it first when present.
+        $mp4Support = $asset['mp4_support'] ?? null;
+        if (!empty($mp4Support) && $mp4Support !== 'none') {
+            $assetsApi->updateAssetMp4Support(
+                $assetId,
+                new MuxPhp\Models\UpdateAssetMP4SupportRequest(['mp4_support' => 'none'])
+            );
+        }
+
+        $resolutions = ['270p', '720p', '1080p'];
+        $errors = [];
+
+        foreach ($resolutions as $resolution) {
             $request = new MuxPhp\Models\CreateStaticRenditionRequest(['resolution' => $resolution]);
             try {
                 $assetsApi->createAssetStaticRendition($assetId, $request);
             } catch (\Exception $e) {
-                // A rendition at this resolution may already exist; ignore and
-                // continue with the remaining resolutions.
+                // A rendition at this resolution may already exist; that is not
+                // a failure. Collect any other error to surface later.
+                if (stripos($e->getMessage(), 'already') === false) {
+                    $errors[] = $resolution . ': ' . $e->getMessage();
+                }
             }
+        }
+
+        // Only treat it as a failure if no rendition could be requested at all.
+        if (count($errors) === count($resolutions)) {
+            throw new \Exception('Could not enable static renditions — ' . implode('; ', $errors));
         }
     }
 
