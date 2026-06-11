@@ -117,14 +117,20 @@ class Methods
             return null;
         }
 
-        // Legacy object format: `{ status, files }`. Mux sometimes reports the
-        // status as `disabled` even though the `files` array already contains
-        // finished renditions, so treat any non-empty `files` list as ready.
-        if (isset($renditions['status']) && is_string($renditions['status'])) {
+        // Legacy object format: `{ status, files }`. The `status` field is not
+        // always present, so the object is detected by its `files` key. A
+        // non-empty `files` list means the renditions are ready, regardless of
+        // (or in the absence of) the reported `status`.
+        if (is_array($renditions) && array_key_exists('files', $renditions)) {
             if (!empty($renditions['files']) && is_array($renditions['files'])) {
                 return 'ready';
             }
 
+            return $renditions['status'] ?? 'disabled';
+        }
+
+        // A bare `status` string without `files` (object shape, no renditions).
+        if (isset($renditions['status']) && is_string($renditions['status'])) {
             return $renditions['status'];
         }
 
