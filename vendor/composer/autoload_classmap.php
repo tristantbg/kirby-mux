@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'GuzzleHttp\\BodySummarizer' => $vendorDir . '/guzzlehttp/guzzle/src/BodySummarizer.php',
     'GuzzleHttp\\BodySummarizerInterface' => $vendorDir . '/guzzlehttp/guzzle/src/BodySummarizerInterface.php',
@@ -31,6 +32,7 @@ return array(
     'GuzzleHttp\\Handler\\CurlFactoryInterface' => $vendorDir . '/guzzlehttp/guzzle/src/Handler/CurlFactoryInterface.php',
     'GuzzleHttp\\Handler\\CurlHandler' => $vendorDir . '/guzzlehttp/guzzle/src/Handler/CurlHandler.php',
     'GuzzleHttp\\Handler\\CurlMultiHandler' => $vendorDir . '/guzzlehttp/guzzle/src/Handler/CurlMultiHandler.php',
+    'GuzzleHttp\\Handler\\CurlShareHandleState' => $vendorDir . '/guzzlehttp/guzzle/src/Handler/CurlShareHandleState.php',
     'GuzzleHttp\\Handler\\EasyHandle' => $vendorDir . '/guzzlehttp/guzzle/src/Handler/EasyHandle.php',
     'GuzzleHttp\\Handler\\HeaderProcessor' => $vendorDir . '/guzzlehttp/guzzle/src/Handler/HeaderProcessor.php',
     'GuzzleHttp\\Handler\\MockHandler' => $vendorDir . '/guzzlehttp/guzzle/src/Handler/MockHandler.php',
@@ -77,6 +79,7 @@ return array(
     'GuzzleHttp\\Psr7\\Query' => $vendorDir . '/guzzlehttp/psr7/src/Query.php',
     'GuzzleHttp\\Psr7\\Request' => $vendorDir . '/guzzlehttp/psr7/src/Request.php',
     'GuzzleHttp\\Psr7\\Response' => $vendorDir . '/guzzlehttp/psr7/src/Response.php',
+    'GuzzleHttp\\Psr7\\Rfc3986' => $vendorDir . '/guzzlehttp/psr7/src/Rfc3986.php',
     'GuzzleHttp\\Psr7\\Rfc7230' => $vendorDir . '/guzzlehttp/psr7/src/Rfc7230.php',
     'GuzzleHttp\\Psr7\\ServerRequest' => $vendorDir . '/guzzlehttp/psr7/src/ServerRequest.php',
     'GuzzleHttp\\Psr7\\Stream' => $vendorDir . '/guzzlehttp/psr7/src/Stream.php',
@@ -92,6 +95,7 @@ return array(
     'GuzzleHttp\\RequestOptions' => $vendorDir . '/guzzlehttp/guzzle/src/RequestOptions.php',
     'GuzzleHttp\\RetryMiddleware' => $vendorDir . '/guzzlehttp/guzzle/src/RetryMiddleware.php',
     'GuzzleHttp\\TransferStats' => $vendorDir . '/guzzlehttp/guzzle/src/TransferStats.php',
+    'GuzzleHttp\\TransportSharing' => $vendorDir . '/guzzlehttp/guzzle/src/TransportSharing.php',
     'GuzzleHttp\\Utils' => $vendorDir . '/guzzlehttp/guzzle/src/Utils.php',
     'KirbyMux\\Auth' => $baseDir . '/classes/KirbyMux/Auth.php',
     'KirbyMux\\Methods' => $baseDir . '/classes/KirbyMux/Methods.php',
@@ -301,6 +305,7 @@ return array(
     'MuxPhp\\Models\\WebInput' => $vendorDir . '/muxinc/mux-php/MuxPhp/Models/WebInput.php',
     'MuxPhp\\Models\\WebInputResponse' => $vendorDir . '/muxinc/mux-php/MuxPhp/Models/WebInputResponse.php',
     'MuxPhp\\ObjectSerializer' => $vendorDir . '/muxinc/mux-php/MuxPhp/ObjectSerializer.php',
+    'PhpToken' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
     'Psr\\Http\\Client\\ClientExceptionInterface' => $vendorDir . '/psr/http-client/src/ClientExceptionInterface.php',
     'Psr\\Http\\Client\\ClientInterface' => $vendorDir . '/psr/http-client/src/ClientInterface.php',
     'Psr\\Http\\Client\\NetworkExceptionInterface' => $vendorDir . '/psr/http-client/src/NetworkExceptionInterface.php',
@@ -318,4 +323,9 @@ return array(
     'Psr\\Http\\Message\\UploadedFileInterface' => $vendorDir . '/psr/http-message/src/UploadedFileInterface.php',
     'Psr\\Http\\Message\\UriFactoryInterface' => $vendorDir . '/psr/http-factory/src/UriFactoryInterface.php',
     'Psr\\Http\\Message\\UriInterface' => $vendorDir . '/psr/http-message/src/UriInterface.php',
+    'Stringable' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+    'Symfony\\Polyfill\\Php80\\Php80' => $vendorDir . '/symfony/polyfill-php80/Php80.php',
+    'Symfony\\Polyfill\\Php80\\PhpToken' => $vendorDir . '/symfony/polyfill-php80/PhpToken.php',
+    'UnhandledMatchError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+    'ValueError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
 );

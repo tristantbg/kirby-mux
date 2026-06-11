@@ -6,6 +6,7 @@ Kirby::plugin('tristantbg/kirby-mux', [
     'options' => [
         'tokenId' => '',
         'tokenSecret' => '',
+        'webhookSecret' => '',
         'dev' => false,
         'optimizeDiskSpace' => false
     ],
@@ -31,13 +32,11 @@ Kirby::plugin('tristantbg/kirby-mux', [
         'muxUrlLow' => function () {
             $playbackId = $this->muxPlaybackId();
             if (!$playbackId) throw new Exception('No Mux playback ID found for file: ' . $this->filename());
-            KirbyMux\Methods::ensureRenditionsReady($this);
             return "https://stream.mux.com/{$playbackId}/270p.mp4";
         },
         'muxUrlHigh' => function () {
             $playbackId = $this->muxPlaybackId();
             if (!$playbackId) throw new Exception('No Mux playback ID found for file: ' . $this->filename());
-            KirbyMux\Methods::ensureRenditionsReady($this);
             $data = json_decode($this->mux(), true);
             $renditions = $data["static_renditions"] ?? null;
             $resolution = ($renditions && $renditions["status"] === 'ready' && count($renditions["files"]) > 1) ? '1080p' : '720p';
@@ -117,7 +116,7 @@ Kirby::plugin('tristantbg/kirby-mux', [
             }
 
             $assetsApi = KirbyMux\Auth::assetsApi();
-            $result = KirbyMux\Methods::upload($assetsApi, $file->url());
+            $result = KirbyMux\Methods::upload($assetsApi, $file->url(), $file);
 
             try {
                 KirbyMux\Methods::processAfterUpload($assetsApi, $file, $result);
@@ -161,7 +160,7 @@ Kirby::plugin('tristantbg/kirby-mux', [
             }
 
             $assetsApi = KirbyMux\Auth::assetsApi();
-            $result = KirbyMux\Methods::upload($assetsApi, $newFile->url());
+            $result = KirbyMux\Methods::upload($assetsApi, $newFile->url(), $newFile);
 
             try {
                 KirbyMux\Methods::processAfterUpload($assetsApi, $newFile, $result);
@@ -169,5 +168,14 @@ Kirby::plugin('tristantbg/kirby-mux', [
                 throw new Exception($e->getMessage());
             }
         }
+    ],
+    'routes' => [
+        [
+            'pattern' => 'mux/webhook',
+            'method' => 'POST',
+            'action' => function () {
+                return KirbyMux\Methods::handleWebhook();
+            }
+        ]
     ]
 ]);

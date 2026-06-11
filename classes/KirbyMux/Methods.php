@@ -3,15 +3,16 @@
 namespace KirbyMux;
 
 use Kirby\Cms\File;
+use Kirby\Http\Response;
 use MuxPhp;
 
 class Methods
 {
-    public static function upload($assetsApi, $url)
+    public static function upload($assetsApi, $url, ?File $file = null)
     {
-        $file = option('tristantbg.kirby-mux.dev') ? "https://storage.googleapis.com/muxdemofiles/mux-video-intro.mp4" : $url;
-        $input = new MuxPhp\Models\InputSettings(["url" => $file]);
-        $createAssetRequest = new MuxPhp\Models\CreateAssetRequest([
+        $source = option('tristantbg.kirby-mux.dev') ? "https://storage.googleapis.com/muxdemofiles/mux-video-intro.mp4" : $url;
+        $input = new MuxPhp\Models\InputSettings(["url" => $source]);
+        $params = [
             "input" => $input,
             "playback_policy" => [MuxPhp\Models\PlaybackPolicy::_PUBLIC],
             'static_renditions' => [
@@ -19,81 +20,153 @@ class Methods
                 new MuxPhp\Models\CreateStaticRenditionRequest(['resolution' => '720p']),
                 new MuxPhp\Models\CreateStaticRenditionRequest(['resolution' => '1080p']),
             ]
-        ]);
+        ];
+
+        // Store the Kirby file id in the Mux asset so incoming webhooks can be
+        // mapped back to the right file without any extra API lookups.
+        if ($file !== null) {
+            $params['passthrough'] = $file->id();
+        }
+
+        $createAssetRequest = new MuxPhp\Models\CreateAssetRequest($params);
 
         return $assetsApi->createAsset($createAssetRequest);
     }
 
     /**
-     * Poll Mux until the asset status is 'ready', then return the asset data.
-     */
-    public static function waitForAssetReady($assetsApi, string $assetId)
-    {
-        while (true) {
-            $asset = $assetsApi->getAsset($assetId);
-            if ($asset->getData()->getStatus() === 'ready') {
-                return $asset;
-            }
-            sleep(1);
-        }
-    }
-
-    /**
-     * Poll Mux until static renditions are ready, update the file, and return refreshed mux data.
+     * Read the stored Mux data for a file. Does not call the Mux API; the
+     * stored data is kept up to date by the Mux webhook handler instead.
      */
     public static function ensureRenditionsReady(File $file): object
     {
-        $muxData = json_decode($file->mux());
-
-        if ($muxData->status === 'preparing' || !isset($muxData->static_renditions) || $muxData->static_renditions->status !== 'ready') {
-            $assetsApi = Auth::assetsApi();
-
-            while (true) {
-                $asset = $assetsApi->getAsset($muxData->id);
-                if ($asset->getData()['static_renditions']['status'] === 'ready') {
-                    $file->update(['mux' => $asset->getData()]);
-                    $muxData = json_decode($file->mux());
-                    break;
-                }
-                sleep(1);
-            }
-        }
-
-        return $muxData;
+        return json_decode($file->mux());
     }
 
     /**
-     * Save a Mux thumbnail to disk and return the Kirby file object.
+     * Save a Mux thumbnail to disk if it does not exist yet.
      */
     public static function saveThumbnail(File $file, string $playbackId, ?float $time = null): void
     {
+        $target = $file->parent()->root() . '/' . $file->name() . '-thumbnail.jpg';
+        if (file_exists($target)) {
+            return;
+        }
+
         $url = "https://image.mux.com/" . $playbackId . "/thumbnail.jpg";
         if ($time !== null) {
             $url .= '?time=' . $time;
         }
         $imagedata = file_get_contents($url);
-        \F::write($file->parent()->root() . '/' . $file->name() . '-thumbnail.jpg', $imagedata);
+        \F::write($target, $imagedata);
     }
 
     /**
-     * Handle post-upload flow: wait for ready, save thumbnail, optionally optimize disk space.
+     * Store the initial asset data after upload. Further processing (thumbnail,
+     * renditions, optional disk optimization) is finished asynchronously by the
+     * Mux webhook, so this method never blocks or polls the API.
      */
     public static function processAfterUpload($assetsApi, File $file, $result): File
     {
-        $file = $file->update(['mux' => $result->getData()]);
+        return $file->update(['mux' => $result->getData()]);
+    }
 
-        if ($result->getData()->getStatus() !== 'ready') {
-            $asset = static::waitForAssetReady($assetsApi, $result->getData()->getId());
-            $playbackId = $result->getData()->getPlaybackIds()[0]->getId();
+    /**
+     * Handle an incoming Mux webhook: verify the signature, find the matching
+     * Kirby file via the asset passthrough, and persist the latest asset data.
+     */
+    public static function handleWebhook(): Response
+    {
+        $rawBody = file_get_contents('php://input');
+        $secret  = option('tristantbg.kirby-mux.webhookSecret');
+
+        if (empty($secret)) {
+            return new Response('Webhook secret not configured', 'text/plain', 500);
+        }
+
+        $signatureHeader = $_SERVER['HTTP_MUX_SIGNATURE'] ?? '';
+        if (!static::verifySignature($rawBody, $signatureHeader, $secret)) {
+            return new Response('Invalid signature', 'text/plain', 403);
+        }
+
+        $event = json_decode($rawBody, true);
+        $type  = $event['type'] ?? '';
+        $data  = $event['data'] ?? [];
+        $passthrough = $data['passthrough'] ?? null;
+
+        // We only care about asset lifecycle events that carry asset data.
+        if (strpos($type, 'video.asset.') !== 0 || empty($data['id'])) {
+            return new Response('Ignored', 'text/plain', 200);
+        }
+
+        if (empty($passthrough)) {
+            // No passthrough means the asset was created before this version of
+            // the plugin. Acknowledge so Mux does not keep retrying.
+            return new Response('No passthrough', 'text/plain', 200);
+        }
+
+        $kirby = kirby();
+        $kirby->impersonate('kirby');
+
+        $file = $kirby->file($passthrough);
+        if (!$file) {
+            return new Response('File not found', 'text/plain', 200);
+        }
+
+        // Persist the latest asset payload as the file's mux data.
+        $file = $file->update(['mux' => json_encode($data)]);
+
+        $status          = $data['status'] ?? null;
+        $playbackId      = $data['playback_ids'][0]['id'] ?? null;
+        $renditionsReady = ($data['static_renditions']['status'] ?? null) === 'ready';
+
+        if ($status === 'ready' && $playbackId) {
             static::saveThumbnail($file, $playbackId);
-            $file = $file->update(['mux' => $asset->getData()]);
+        }
 
-            if (option('tristantbg.kirby-mux.optimizeDiskSpace', false)) {
-                $videodata = file_get_contents($file->muxUrlLow());
-                \F::write($file->parent()->root() . '/' . $file->name() . '.mp4', $videodata);
+        if ($renditionsReady && option('tristantbg.kirby-mux.optimizeDiskSpace', false)) {
+            $videodata = file_get_contents($file->muxUrlLow());
+            \F::write($file->parent()->root() . '/' . $file->name() . '.mp4', $videodata);
+        }
+
+        return new Response('OK', 'text/plain', 200);
+    }
+
+    /**
+     * Verify a Mux webhook signature header (`Mux-Signature: t=...,v1=...`).
+     * Uses HMAC-SHA256 over "{timestamp}.{rawBody}" and a constant-time compare.
+     */
+    private static function verifySignature(string $payload, string $header, string $secret): bool
+    {
+        if ($header === '') {
+            return false;
+        }
+
+        $timestamp = null;
+        $signature = null;
+        foreach (explode(',', $header) as $part) {
+            $pair = explode('=', trim($part), 2);
+            if (count($pair) !== 2) {
+                continue;
+            }
+            [$key, $value] = $pair;
+            if ($key === 't') {
+                $timestamp = $value;
+            } elseif ($key === 'v1') {
+                $signature = $value;
             }
         }
 
-        return $file;
+        if ($timestamp === null || $signature === null) {
+            return false;
+        }
+
+        // Reject events older than 5 minutes to mitigate replay attacks.
+        if (abs(time() - (int)$timestamp) > 300) {
+            return false;
+        }
+
+        $expected = hash_hmac('sha256', $timestamp . '.' . $payload, $secret);
+
+        return hash_equals($expected, $signature);
     }
 }
