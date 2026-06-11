@@ -35,6 +35,14 @@
       <template #options="{ row }">
         <k-button-group>
           <k-button
+            icon="refresh"
+            size="xs"
+            variant="filled"
+            :disabled="refetching === row.id"
+            title="Refetch Mux data from the Mux API"
+            @click="refetch(row)"
+          />
+          <k-button
             icon="edit"
             :link="row.panelUrl"
             size="xs"
@@ -73,6 +81,7 @@ export default {
       items: this.videos,
       summary: this.stats,
       loading: false,
+      refetching: null,
     };
   },
   computed: {
@@ -109,6 +118,7 @@ export default {
     },
     rows() {
       return this.items.map((video) => ({
+        id: video.id,
         thumbnail: video.thumbnail
           ? `<img src="${video.thumbnail}" alt="" style="width:56px;height:32px;object-fit:cover;border-radius:var(--rounded-sm);" />`
           : "—",
@@ -118,11 +128,7 @@ export default {
         parent: this.escape(video.parentTitle || "—"),
         status: this.statusBadge(video),
         renditions: this.renditionsBadge(video),
-        asset: video.assetId
-          ? `<code style="font-size:var(--text-xs)">${this.escape(
-              video.assetId
-            )}</code>`
-          : "—",
+        asset: this.assetCell(video),
         panelUrl: video.panelUrl,
         dashboardUrl: video.dashboardUrl,
       }));
@@ -169,6 +175,16 @@ export default {
         : { bg: "var(--color-gray-300)", fg: "var(--color-gray-900)" };
       return this.badge(video.renditionsStatus || "pending", color);
     },
+    assetCell(video) {
+      if (!video.assetId) return "—";
+      const code = `<code style="font-size:var(--text-xs)">${this.escape(
+        video.assetId
+      )}</code>`;
+      if (!video.dashboardUrl) return code;
+      return `<a href="${this.escape(
+        video.dashboardUrl
+      )}" target="_blank" rel="noopener noreferrer" title="Open asset in Mux dashboard">${code}</a>`;
+    },
     async load() {
       this.loading = true;
       try {
@@ -180,6 +196,30 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    async refetch(row) {
+      this.refetching = row.id;
+      try {
+        const updated = await this.$api.post("mux/refetch", { id: row.id });
+        const index = this.items.findIndex((video) => video.id === row.id);
+        if (index !== -1) {
+          this.items.splice(index, 1, updated);
+        }
+        this.recomputeStats();
+        this.$panel.notification.success("Mux data refetched");
+      } catch (error) {
+        this.$panel.notification.error(error);
+      } finally {
+        this.refetching = null;
+      }
+    },
+    recomputeStats() {
+      this.summary = {
+        total: this.items.length,
+        ready: this.items.filter((video) => video.status === "ready").length,
+        missing: this.items.filter((video) => video.hasMuxData === false)
+          .length,
+      };
     },
   },
 };

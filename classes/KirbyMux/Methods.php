@@ -71,6 +71,54 @@ class Methods
     }
 
     /**
+     * Refetch the Mux data for a single file directly from the Mux API.
+     *
+     * - If the file already has a stored asset id, the latest asset data is
+     *   pulled with a single `getAsset` call and persisted.
+     * - If the file has no Mux data at all, the file is (re-)uploaded to Mux,
+     *   creating a fresh asset with the passthrough so future webhooks resolve.
+     *
+     * Unlike the webhook flow this performs a direct API call, so it should be
+     * triggered manually (e.g. from the Panel) to recover missing data.
+     *
+     * @return array<string, mixed> The refreshed Panel-facing video data.
+     */
+    public static function refetch(string $id): array
+    {
+        $kirby = kirby();
+        $kirby->impersonate('kirby');
+
+        $file = $kirby->file($id);
+        if (!$file) {
+            throw new \Kirby\Exception\NotFoundException('File not found: ' . $id);
+        }
+
+        $assetsApi = Auth::assetsApi();
+
+        $raw     = $file->mux()->isNotEmpty() ? json_decode($file->mux(), true) : null;
+        $assetId = is_array($raw) ? ($raw['id'] ?? null) : null;
+
+        if ($assetId) {
+            // Pull the latest asset payload from Mux and persist it.
+            $response = $assetsApi->getAsset($assetId);
+            $file     = $file->update(['mux' => $response->getData()]);
+        } else {
+            // No asset stored yet: create a fresh Mux asset from the file.
+            $result = static::upload($assetsApi, $file->url(), $file);
+            $file   = static::processAfterUpload($assetsApi, $file, $result);
+        }
+
+        // Save the thumbnail locally once the asset is ready.
+        $data       = json_decode($file->mux(), true);
+        $playbackId = $data['playback_ids'][0]['id'] ?? null;
+        if (($data['status'] ?? null) === 'ready' && $playbackId) {
+            static::saveThumbnail($file, $playbackId);
+        }
+
+        return static::videoData($file);
+    }
+
+    /**
      * Build the Mux dashboard asset URL when an environment id is configured.
      */
     public static function dashboardUrl(?string $assetId): ?string

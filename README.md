@@ -123,9 +123,19 @@ The view shows, for each video:
 - The Mux **asset id**
 - A button to **open the file in the Panel**
 - A button to **open the asset in the Mux dashboard** (shown only when `environmentId` is configured)
+- A **Refetch** button to pull the latest data for a single video directly from the Mux API
 - A **Refresh** button to reload the list from the stored data
 
 The list reads stored file data only — it never calls the Mux API, so it does not count against your rate limits.
+
+### Refetching missing data
+
+If a video is missing its Mux data (status `missing`) — for example it was uploaded before webhooks were configured, or while a webhook was down — use the per-row **Refetch** button to recover it. Refetching makes a direct Mux API call:
+
+- If the video already has a stored asset id, the latest asset data is pulled and saved.
+- If the video has no Mux data at all, it is re-uploaded to Mux, creating a fresh asset (with the passthrough so future webhooks resolve correctly).
+
+Because refetching calls the Mux API directly, trigger it manually rather than relying on it for normal rendering.
 
 To enable the Mux dashboard links, set your environment id:
 

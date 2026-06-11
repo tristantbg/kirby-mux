@@ -209,6 +209,13 @@ Kirby::plugin('tristantbg/kirby-mux', [
                 'action' => function () {
                     return KirbyMux\Methods::panelVideos();
                 }
+            ],
+            [
+                'pattern' => 'mux/refetch',
+                'method' => 'POST',
+                'action' => function () {
+                    return KirbyMux\Methods::refetch(get('id'));
+                }
             ]
         ]
     ]
