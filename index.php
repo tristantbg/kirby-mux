@@ -7,6 +7,7 @@ Kirby::plugin('tristantbg/kirby-mux', [
         'tokenId' => '',
         'tokenSecret' => '',
         'webhookSecret' => '',
+        'organizationId' => '',
         'environmentId' => '',
         'dev' => false,
         'optimizeDiskSpace' => false

@@ -36,14 +36,15 @@ return [
 
 ### Options
 
-| Option              | Type      | Default | Description                                                       |
-| ------------------- | --------- | ------- | ----------------------------------------------------------------- |
-| `tokenId`           | `String`  | `''`    | Your Mux API Access Token ID                                      |
-| `tokenSecret`       | `String`  | `''`    | Your Mux API Secret Key                                           |
-| `webhookSecret`     | `String`  | `''`    | Your Mux webhook signing secret (required for webhooks)           |
-| `environmentId`     | `String`  | `''`    | Your Mux environment id, used to link assets to the Mux dashboard |
-| `dev`               | `Boolean` | `false` | Use a test video instead of the actual upload                     |
-| `optimizeDiskSpace` | `Boolean` | `false` | Download the low-res MP4 locally and replace the original         |
+| Option              | Type      | Default | Description                                                        |
+| ------------------- | --------- | ------- | ------------------------------------------------------------------ |
+| `tokenId`           | `String`  | `''`    | Your Mux API Access Token ID                                       |
+| `tokenSecret`       | `String`  | `''`    | Your Mux API Secret Key                                            |
+| `webhookSecret`     | `String`  | `''`    | Your Mux webhook signing secret (required for webhooks)            |
+| `organizationId`    | `String`  | `''`    | Your Mux organization id, used to link assets to the Mux dashboard |
+| `environmentId`     | `String`  | `''`    | Your Mux environment id, used to link assets to the Mux dashboard  |
+| `dev`               | `Boolean` | `false` | Use a test video instead of the actual upload                      |
+| `optimizeDiskSpace` | `Boolean` | `false` | Download the low-res MP4 locally and replace the original          |
 
 ### Dev Mode
 
@@ -139,13 +140,14 @@ If a video is missing its Mux data (status `missing`) — for example it was upl
 
 Because refetching calls the Mux API directly, trigger it manually rather than relying on it for normal rendering.
 
-To enable deep links straight to the asset in the Mux dashboard, set your environment id (otherwise the button opens the general dashboard):
+To enable deep links straight to the asset in the Mux dashboard, set your organization id and environment id (otherwise the button opens the general dashboard):
 
 ```php
 // site/config/config.php
 return [
   'tristantbg.kirby-mux' => [
     // …
+    'organizationId' => 'XXX', // from your Mux dashboard URL
     'environmentId' => 'XXX', // from your Mux dashboard URL
   ],
 ];

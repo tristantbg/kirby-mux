@@ -149,9 +149,10 @@ class Methods
     /**
      * Build the Mux dashboard asset URL.
      *
-     * When an `environmentId` is configured the URL deep-links straight to the
-     * asset. Otherwise it falls back to the general Mux dashboard so the link
-     * is still shown (Mux redirects to the user's default environment).
+     * When both an `organizationId` and `environmentId` are configured the URL
+     * deep-links straight to the asset. Otherwise it falls back to the general
+     * Mux dashboard so the link is still shown (Mux redirects to the user's
+     * default organization/environment).
      */
     public static function dashboardUrl(?string $assetId): ?string
     {
@@ -159,12 +160,14 @@ class Methods
             return null;
         }
 
-        $environmentId = option('tristantbg.kirby-mux.environmentId');
-        if (empty($environmentId)) {
+        $organizationId = option('tristantbg.kirby-mux.organizationId');
+        $environmentId  = option('tristantbg.kirby-mux.environmentId');
+
+        if (empty($organizationId) || empty($environmentId)) {
             return 'https://dashboard.mux.com/';
         }
 
-        return "https://dashboard.mux.com/environments/{$environmentId}/assets/{$assetId}";
+        return "https://dashboard.mux.com/organizations/{$organizationId}/environments/{$environmentId}/assets/{$assetId}";
     }
 
     /**
