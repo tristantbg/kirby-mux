@@ -167,7 +167,7 @@ class Methods
             return 'https://dashboard.mux.com/';
         }
 
-        return "https://dashboard.mux.com/organizations/{$organizationId}/environments/{$environmentId}/assets/{$assetId}";
+        return "https://dashboard.mux.com/organizations/{$organizationId}/environments/{$environmentId}/video/assets/{$assetId}";
     }
 
     /**
