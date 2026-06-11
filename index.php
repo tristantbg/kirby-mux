@@ -42,10 +42,50 @@ Kirby::plugin('tristantbg/kirby-mux', [
         'muxUrlHigh' => function () {
             $playbackId = $this->muxPlaybackId();
             if (!$playbackId) throw new Exception('No Mux playback ID found for file: ' . $this->filename());
-            $data = json_decode($this->mux(), true);
-            $renditions = $data["static_renditions"] ?? null;
-            $resolution = ($renditions && $renditions["status"] === 'ready' && count($renditions["files"]) > 1) ? '1080p' : '720p';
+            $resolution = $this->muxHasRendition('1080p') ? '1080p' : '720p';
             return "https://stream.mux.com/{$playbackId}/{$resolution}.mp4";
+        },
+        'muxRenditionsStatus' => function () {
+            $data = $this->mux()->isNotEmpty() ? json_decode($this->mux(), true) : null;
+            return KirbyMux\Methods::renditionsStatus(is_array($data) ? $data : null);
+        },
+        'muxHasRendition' => function (string $resolution) {
+            $data = $this->mux()->isNotEmpty() ? json_decode($this->mux(), true) : null;
+            if (!is_array($data)) {
+                return false;
+            }
+            // Only consider renditions usable once they are ready.
+            if (KirbyMux\Methods::renditionsStatus($data) !== 'ready') {
+                return false;
+            }
+
+            $renditions = $data['static_renditions'] ?? null;
+
+            // Legacy object format: `{ status, files: [{ name, ... }] }`.
+            if (is_array($renditions) && isset($renditions['files']) && is_array($renditions['files'])) {
+                foreach ($renditions['files'] as $file) {
+                    $name = $file['name'] ?? ($file['resolution'] ?? null);
+                    if (is_string($name) && strpos($name, $resolution) !== false) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // Newer array format: `[{ resolution, status }, ...]`.
+            if (is_array($renditions)) {
+                foreach ($renditions as $rendition) {
+                    if (
+                        is_array($rendition)
+                        && ($rendition['resolution'] ?? null) === $resolution
+                        && ($rendition['status'] ?? null) === 'ready'
+                    ) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         },
         'muxUrlStream' => function () {
             $playbackId = $this->muxPlaybackId();
