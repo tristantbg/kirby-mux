@@ -25,6 +25,9 @@ Kirby::plugin('tristantbg/kirby-mux', [
         'files/mux-video' => __DIR__ . '/blueprints/files/mux-video.yml',
         'blocks/mux-video' => __DIR__ . '/blueprints/blocks/mux-video.yml'
     ],
+    'filePreviews' => [
+        KirbyMux\MuxFilePreview::class
+    ],
     'fileMethods' => [
         'muxPlaybackId' => function () {
             $data = json_decode($this->mux());

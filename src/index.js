@@ -1,5 +1,6 @@
 import VideoBlock from "./components/VideoBlock.vue";
 import MuxView from "./components/MuxView.vue";
+import MuxFilePreview from "./components/MuxFilePreview.vue";
 
 window.panel.plugin("robinscholz/kirby-mux", {
   blocks: {
@@ -7,5 +8,6 @@ window.panel.plugin("robinscholz/kirby-mux", {
   },
   components: {
     "k-mux-view": MuxView,
+    "k-mux-file-preview": MuxFilePreview,
   },
 });

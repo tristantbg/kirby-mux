@@ -174,6 +174,7 @@ class ComposerStaticInit8b1623af0ffaaf008be85a60e6dc5c57
         'GuzzleHttp\\Utils' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Utils.php',
         'KirbyMux\\Auth' => __DIR__ . '/../..' . '/classes/KirbyMux/Auth.php',
         'KirbyMux\\Methods' => __DIR__ . '/../..' . '/classes/KirbyMux/Methods.php',
+        'KirbyMux\\MuxFilePreview' => __DIR__ . '/../..' . '/classes/KirbyMux/MuxFilePreview.php',
         'Kirby\\ComposerInstaller\\CmsInstaller' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/CmsInstaller.php',
         'Kirby\\ComposerInstaller\\Installer' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/Installer.php',
         'Kirby\\ComposerInstaller\\Plugin' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/Plugin.php',

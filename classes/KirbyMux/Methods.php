@@ -165,6 +165,9 @@ class Methods
             $collect($page->files());
         }
 
+        // Newest first, based on the file's last modification time.
+        usort($videos, fn($a, $b) => ($b['modified'] ?? 0) <=> ($a['modified'] ?? 0));
+
         $stats = [
             'total'   => count($videos),
             'ready'   => count(array_filter($videos, fn($v) => $v['status'] === 'ready')),
@@ -198,6 +201,7 @@ class Methods
             'panelUrl'         => $file->panel()->url(true),
             'parentTitle'      => method_exists($parent, 'title') ? (string) $parent->title() : 'Site',
             'parentUrl'        => method_exists($parent, 'panel') ? $parent->panel()->url(true) : null,
+            'modified'         => $file->modified(),
             'hasMuxData'       => $hasMuxData,
             'assetId'          => $assetId,
             'status'           => $hasMuxData ? ($status ?? 'unknown') : 'missing',

@@ -99,6 +99,7 @@ return array(
     'GuzzleHttp\\Utils' => $vendorDir . '/guzzlehttp/guzzle/src/Utils.php',
     'KirbyMux\\Auth' => $baseDir . '/classes/KirbyMux/Auth.php',
     'KirbyMux\\Methods' => $baseDir . '/classes/KirbyMux/Methods.php',
+    'KirbyMux\\MuxFilePreview' => $baseDir . '/classes/KirbyMux/MuxFilePreview.php',
     'Kirby\\ComposerInstaller\\CmsInstaller' => $vendorDir . '/getkirby/composer-installer/src/ComposerInstaller/CmsInstaller.php',
     'Kirby\\ComposerInstaller\\Installer' => $vendorDir . '/getkirby/composer-installer/src/ComposerInstaller/Installer.php',
     'Kirby\\ComposerInstaller\\Plugin' => $vendorDir . '/getkirby/composer-installer/src/ComposerInstaller/Plugin.php',
